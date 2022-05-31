@@ -32,43 +32,75 @@ function getProducts() {
 }
 
 function displayProducts(products) {
-  var _iteratorNormalCompletion = true;
-  var _didIteratorError = false;
-  var _iteratorError = undefined;
+  var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, productLink, productArticle, productImg, productName, productDescription;
 
-  try {
-    for (var _iterator = products[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      product = _step.value;
-      var productLink = document.createElement("a");
-      productLink.setAttribute("href", "#");
-      var productArticle = document.createElement("article");
-      var productImg = document.createElement("img");
-      productImg.setAttribute("src", product.imageUrl);
-      productImg.setAttribute("alt", product.altTxt);
-      var productName = document.createElement("h3");
-      productName.setAttribute("id", "productName");
-      productName.textContent = product.name;
-      var productDescription = document.createElement("p");
-      productDescription.setAttribute("id", "productDescription");
-      productDescription.textContent = product.description;
-      document.getElementById("items").appendChild(productLink).appendChild(productArticle);
-      productArticle.appendChild(productImg);
-      productArticle.appendChild(productName);
-      productArticle.appendChild(productDescription);
-    }
-  } catch (err) {
-    _didIteratorError = true;
-    _iteratorError = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-        _iterator["return"]();
+  return regeneratorRuntime.async(function displayProducts$(_context2) {
+    while (1) {
+      switch (_context2.prev = _context2.next) {
+        case 0:
+          _iteratorNormalCompletion = true;
+          _didIteratorError = false;
+          _iteratorError = undefined;
+          _context2.prev = 3;
+
+          for (_iterator = products[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            product = _step.value;
+            productLink = document.createElement("a");
+            productLink.href += '?id=' + product._id;
+            productArticle = document.createElement("article");
+            productImg = document.createElement("img");
+            productImg.setAttribute("src", product.imageUrl);
+            productImg.setAttribute("alt", product.altTxt);
+            productName = document.createElement("h3");
+            productName.setAttribute("id", "productName");
+            productName.textContent = product.name;
+            productDescription = document.createElement("p");
+            productDescription.setAttribute("id", "productDescription");
+            productDescription.textContent = product.description;
+            document.getElementById("items").appendChild(productLink).appendChild(productArticle);
+            productArticle.appendChild(productImg);
+            productArticle.appendChild(productName);
+            productArticle.appendChild(productDescription);
+          }
+
+          _context2.next = 11;
+          break;
+
+        case 7:
+          _context2.prev = 7;
+          _context2.t0 = _context2["catch"](3);
+          _didIteratorError = true;
+          _iteratorError = _context2.t0;
+
+        case 11:
+          _context2.prev = 11;
+          _context2.prev = 12;
+
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
+          }
+
+        case 14:
+          _context2.prev = 14;
+
+          if (!_didIteratorError) {
+            _context2.next = 17;
+            break;
+          }
+
+          throw _iteratorError;
+
+        case 17:
+          return _context2.finish(14);
+
+        case 18:
+          return _context2.finish(11);
+
+        case 19:
+        case "end":
+          return _context2.stop();
       }
-    } finally {
-      if (_didIteratorError) {
-        throw _iteratorError;
-      }
     }
-  }
+  }, null, null, [[3, 7, 11, 19], [12,, 14, 18]]);
 }
 //# sourceMappingURL=index.dev.js.map

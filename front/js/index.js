@@ -16,10 +16,10 @@ function getProducts() {
     });
 }
 
-function displayProducts(products) {
+async function displayProducts(products) {
     for (product of products) {
         const productLink = document.createElement("a");
-        productLink.setAttribute("href", "#");
+        productLink.href += '?id=' + product._id; 
 
         const productArticle = document.createElement("article");
         
