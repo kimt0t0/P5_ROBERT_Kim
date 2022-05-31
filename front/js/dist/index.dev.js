@@ -39,16 +39,22 @@ function displayProducts(products) {
   try {
     for (var _iterator = products[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
       product = _step.value;
+      var productLink = document.createElement("a");
+      productLink.setAttribute("href", "#");
       var productArticle = document.createElement("article");
-      document.getElementById("items").append(productArticle);
+      var productImg = document.createElement("img");
+      productImg.setAttribute("src", product.imageUrl);
+      productImg.setAttribute("alt", product.altTxt);
       var productName = document.createElement("h3");
       productName.setAttribute("id", "productName");
       productName.textContent = product.name;
-      document.getElementById("items").getElementsByTagName("article").append(productName);
       var productDescription = document.createElement("p");
       productDescription.setAttribute("id", "productDescription");
       productDescription.textContent = product.description;
-      document.getElementById("items").getElementsByTagName("article").append(productDescription);
+      document.getElementById("items").appendChild(productLink).appendChild(productArticle);
+      productArticle.appendChild(productImg);
+      productArticle.appendChild(productName);
+      productArticle.appendChild(productDescription);
     }
   } catch (err) {
     _didIteratorError = true;
