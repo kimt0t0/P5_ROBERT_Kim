@@ -19,7 +19,7 @@ function getProducts() {
 async function displayProducts(products) {
     for (product of products) {
         const productLink = document.createElement("a");
-        productLink.href += '?id=' + product._id; 
+        productLink.href = './product.html?id=' + product._id; 
 
         const productArticle = document.createElement("article");
         

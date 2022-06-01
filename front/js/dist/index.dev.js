@@ -46,7 +46,7 @@ function displayProducts(products) {
           for (_iterator = products[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
             product = _step.value;
             productLink = document.createElement("a");
-            productLink.href += '?id=' + product._id;
+            productLink.href = './product.html?id=' + product._id;
             productArticle = document.createElement("article");
             productImg = document.createElement("img");
             productImg.setAttribute("src", product.imageUrl);
