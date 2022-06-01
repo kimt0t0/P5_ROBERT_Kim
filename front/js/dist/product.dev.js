@@ -1,24 +1,19 @@
 "use strict";
 
 (function _callee() {
-  var productId, product;
+  var product;
   return regeneratorRuntime.async(function _callee$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
           _context.next = 2;
-          return regeneratorRuntime.awrap(getProductId());
-
-        case 2:
-          productId = _context.sent;
-          _context.next = 5;
           return regeneratorRuntime.awrap(getProduct());
 
-        case 5:
+        case 2:
           product = _context.sent;
           hydrateProduct(product);
 
-        case 7:
+        case 4:
         case "end":
           return _context.stop();
       }
@@ -26,16 +21,18 @@
   });
 })();
 
-function getProductId() {
-  return new URL(location.href).searchParams.get("id");
-}
-
 function getProduct() {
   return fetch("http://localhost:3000/api/products").then(function (httpBodyResponse) {
     return httpBodyResponse.json();
-  }).then(function (products) {
+  })
+  /* récupération de l'ensemble des produits: */
+  .then(function (products) {
     return products;
-  }).then(function (products, productId) {
+  }).then(function (products) {
+    /* récupération id dans l'url: */
+    var productId = new URL(location.href).searchParams.get("id");
+    /* recherche du produit correspondant: */
+
     var _iteratorNormalCompletion = true;
     var _didIteratorError = false;
     var _iteratorError = undefined;
@@ -44,10 +41,8 @@ function getProduct() {
       for (var _iterator = products[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
         product = _step.value;
 
-        if (product.id == productId) {
+        if (product._id == productId) {
           return product;
-        } else {
-          return alert('Aucun produit ne corresponed à la recherche ou le produit recherché n\'existe plus.');
         }
       }
     } catch (err) {

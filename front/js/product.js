@@ -1,26 +1,24 @@
 (async function() {
-    const productId = await getProductId();
     const product = await getProduct();
     hydrateProduct(product);
 })()
-
-function getProductId () {
-    return new URL(location.href).searchParams.get("id");
-}
 
 function getProduct() {
     return fetch("http://localhost:3000/api/products")
       .then(function(httpBodyResponse) {
         return httpBodyResponse.json();
       })
+      /* récupération de l'ensemble des produits: */
       .then(function(products) {
           return products;
       })
-      .then(function(products, productId) {
-          for (product of products) {
-              if (product.id == productId) {return product;}
-              else {
-                  return alert( 'Aucun produit ne corresponed à la recherche ou le produit recherché n\'existe plus.');}
+      .then(function(products) {
+        /* récupération id dans l'url: */
+        const productId =  new URL(location.href).searchParams.get("id");
+          /* recherche du produit correspondant: */
+          for (product of products) { 
+              if (product._id == productId) {  
+                return product;}
           }
       })
       .catch(function(error) {

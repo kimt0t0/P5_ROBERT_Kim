@@ -45,18 +45,30 @@ function displayProducts(products) {
 
           for (_iterator = products[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
             product = _step.value;
+
+            /* Lien */
             productLink = document.createElement("a");
             productLink.href = './product.html?id=' + product._id;
+            /* Article */
+
             productArticle = document.createElement("article");
+            /* Image */
+
             productImg = document.createElement("img");
             productImg.setAttribute("src", product.imageUrl);
             productImg.setAttribute("alt", product.altTxt);
+            /* Nom produit */
+
             productName = document.createElement("h3");
             productName.setAttribute("id", "productName");
             productName.textContent = product.name;
+            /* Description */
+
             productDescription = document.createElement("p");
             productDescription.setAttribute("id", "productDescription");
             productDescription.textContent = product.description;
+            /* Ajout de l'ensemble à la section items */
+
             document.getElementById("items").appendChild(productLink).appendChild(productArticle);
             productArticle.appendChild(productImg);
             productArticle.appendChild(productName);
