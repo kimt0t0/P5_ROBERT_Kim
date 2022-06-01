@@ -1,5 +1,6 @@
 "use strict";
 
+/* Gestion du contenu de la partie produit */
 (function _callee() {
   var product;
   return regeneratorRuntime.async(function _callee$(_context) {
@@ -27,8 +28,6 @@ function getProduct() {
   })
   /* récupération de l'ensemble des produits: */
   .then(function (products) {
-    return products;
-  }).then(function (products) {
     /* récupération id dans l'url: */
     var productId = new URL(location.href).searchParams.get("id");
     /* recherche du produit correspondant: */
@@ -110,4 +109,17 @@ function hydrateProduct(product) {
     }
   }
 }
+/* Gestion du panier */
+
+
+var panier = localStorage;
+console.log(panier);
+document.getElementById("addToCart").setEventListener("click", function (e) {
+  var quantity = document.getElementById("quantity");
+  var color = document.getElementById("colors").setEventListener("select", function (e) {
+    return;
+  });
+  panier.setItem(product._id, [quantity, color]);
+  /*problème: ne prend pas en compte le choix de couleur */
+});
 //# sourceMappingURL=product.dev.js.map

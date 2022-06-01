@@ -1,3 +1,4 @@
+/* Gestion du contenu de la partie produit */
 (async function() {
     const product = await getProduct();
     hydrateProduct(product);
@@ -9,9 +10,6 @@ function getProduct() {
         return httpBodyResponse.json();
       })
       /* récupération de l'ensemble des produits: */
-      .then(function(products) {
-          return products;
-      })
       .then(function(products) {
         /* récupération id dans l'url: */
         const productId =  new URL(location.href).searchParams.get("id");
@@ -50,3 +48,15 @@ function hydrateProduct(product) {
         scrollColors.append(newColor);
     }
 }
+
+/* Gestion du panier */
+var panier = localStorage;
+console.log(panier);
+
+document
+    .getElementById("addToCart")
+    .setEventListener("click", function (e) {
+        var quantity = document.getElementById("quantity");
+        var color = document.getElementById("colors").setEventListener("select", function(e) {return /* value de l'option */;})
+        panier.setItem(product._id, [quantity, color]); /*problème: ne prend pas en compte le choix de couleur */
+    });
