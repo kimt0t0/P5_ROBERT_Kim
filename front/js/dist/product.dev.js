@@ -112,14 +112,58 @@ function hydrateProduct(product) {
 /* Gestion du panier */
 
 
-var panier = localStorage;
-console.log(panier);
-document.getElementById("addToCart").setEventListener("click", function (e) {
-  var quantity = document.getElementById("quantity");
-  var color = document.getElementById("colors").setEventListener("select", function (e) {
-    return;
+(function _callee2() {
+  var quantity, color, panier;
+  return regeneratorRuntime.async(function _callee2$(_context2) {
+    while (1) {
+      switch (_context2.prev = _context2.next) {
+        case 0:
+          _context2.next = 2;
+          return regeneratorRuntime.awrap(getQuantity());
+
+        case 2:
+          quantity = _context2.sent;
+          _context2.next = 5;
+          return regeneratorRuntime.awrap(getColor());
+
+        case 5:
+          color = _context2.sent;
+          _context2.next = 8;
+          return regeneratorRuntime.awrap(addToCart(color, quantity));
+
+        case 8:
+          panier = _context2.sent;
+          console.log(panier);
+
+        case 10:
+        case "end":
+          return _context2.stop();
+      }
+    }
   });
-  panier.setItem(product._id, [quantity, color]);
-  /*problème: ne prend pas en compte le choix de couleur */
-});
+})();
+
+function getColor() {
+  document.getElementById("colors").addEventListener("change", function (e) {
+    return color = e.target.value;
+  });
+}
+
+function getQuantity() {
+  document.getElementById("quantity").addEventListener("input", function (e) {
+    return quantity = e.target.value;
+  });
+}
+
+function addToCart() {
+  document.getElementById("addToCart").addEventListener("click", function (e) {
+    var panier = localStorage;
+
+    if (panier.getItem(product._id) && panier.getItem(product._id)[color]) {
+      panier.product._id[quantity] += quantity;
+    } else {
+      panier.setItem(product._id, [quantity, color]);
+    }
+  });
+}
 //# sourceMappingURL=product.dev.js.map

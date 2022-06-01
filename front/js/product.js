@@ -50,13 +50,34 @@ function hydrateProduct(product) {
 }
 
 /* Gestion du panier */
-var panier = localStorage;
-console.log(panier);
 
-document
-    .getElementById("addToCart")
-    .setEventListener("click", function (e) {
-        var quantity = document.getElementById("quantity");
-        var color = document.getElementById("colors").setEventListener("select", function(e) {return /* value de l'option */;})
-        panier.setItem(product._id, [quantity, color]); /*problème: ne prend pas en compte le choix de couleur */
+(async function() {
+
+    var quantity = await getQuantity();
+    var color = await getColor();
+    var panier = await addToCart(color, quantity);
+    console.log(panier);
+})()
+
+function getColor() {
+    document.getElementById("colors").addEventListener("change",function(e) {
+        return color = e.target.value;
     });
+}
+
+function getQuantity() {
+    document.getElementById("quantity").addEventListener("input", function (e) {
+        return quantity = e.target.value;
+    });
+}
+
+function addToCart() {
+    document.getElementById("addToCart").addEventListener("click", function(e) {
+        var panier = localStorage;
+        if (panier.getItem(product._id) && panier.getItem(product._id)[color]) {
+            panier.product._id[quantity] += quantity;
+        }
+        else {panier.setItem(product._id, [quantity, color]);}
+    });
+}
+
