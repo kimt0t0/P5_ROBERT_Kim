@@ -1,7 +1,5 @@
 "use strict";
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 /* *** GÉNÉRAL *** */
 
 /* Récupération données produit */
@@ -164,41 +162,13 @@ function hydrateProduct(product) {
 }
 /* *** GESTION PANIER *** */
 
-/* CLASSES */
-
-/* Classe pour l'objet panier */
+/* Variables */
 
 
-var Cart = function Cart() {
-  _classCallCheck(this, Cart);
-
-  this.inventory = localStorage;
-  this.itemsCounter = 0;
-  this.itemsList = {};
-  this.totalPrice = 0;
-}
-/* fonction pour vérifier si un objet est déjà présent dans le panier */
-
-/* fonction pour créer un nouvel objet dans le panier */
-
-/* fonction pour ajouter une quantité à un objet existant dans le panier */
-;
-
-var cart = new Cart();
-/* Classe pour l'objet à ajouter */
-
-var cartProduct = function cartProduct(_id, color, quantity) {
-  _classCallCheck(this, cartProduct);
-
-  this._id = _id;
-  this.color = color;
-  this.quantity = quantity;
-};
+var cart = localStorage;
 /* FONCTIONS */
 
-
 function getProductId(product) {
-  console.log(product._id);
   return product._id;
 }
 
@@ -206,45 +176,59 @@ function getProductColor() {
   var select = document.getElementById("colors"),
       index = select.selectedIndex;
   var productColor = select.options[index].value;
-  console.log(productColor);
   return productColor;
 }
 
 function getProductQuantity() {
   var productQuantity = document.getElementById("quantity").value;
-  console.log(productQuantity);
   return productQuantity;
 }
+
+function cartKey(id, color) {
+  return id + " " + color;
+}
+
+function addToCart(cartKey, quantity) {
+  if (cart[cartKey]) {
+    cart[cartKey] += quantity;
+    console.log(cart);
+  } else {
+    cart[cartKey] = quantity;
+    console.log(cart);
+  }
+}
+/* Vérif: function checkCart (cart) {
+    console.log(cart);
+} */
+
 /* ACTIONS */
 
 /* Déclenchement action */
 
 
 document.getElementById("addToCart").addEventListener("click", function _callee2(e) {
-  var productId, productColor, productQuantity, newCartProduct;
+  var productId, productColor, productQuantity;
   return regeneratorRuntime.async(function _callee2$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
-          console.log("clic enregistré");
           /* récupérer l'id du produit et stocker dans var _id*/
-
           productId = getProductId(product);
-          console.log(productId);
           /* récupérer la couleur et stocker dans var color */
 
           productColor = getProductColor();
-          console.log(productColor);
           /* récupérer la quantité et stocker dans var quantity */
 
           productQuantity = getProductQuantity();
-          console.log(productQuantity);
-          /* créer un objet newProduct */
+          /* création des clés */
 
-          newCartProduct = cartProduct(productId, productColor, productQuantity);
-          console.log(newCartProduct);
+          cartKey = cartKey(productId, productColor);
+          /* ajout au panier */
 
-        case 9:
+          addToCart(cartKey, productQuantity);
+          /* Vérif: checkCart(); */
+
+        case 5:
         case "end":
           return _context4.stop();
       }
