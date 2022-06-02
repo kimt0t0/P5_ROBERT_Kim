@@ -1,9 +1,6 @@
-/* CONTENU PARTIE PRODUIT */
-(async function() {
-    var product = await getProduct();
-    hydrateProduct(product);
-})()
+/* *** GÉNÉRAL *** */
 
+/* Récupération données produit */
 async function getProduct() {
     return fetch("http://localhost:3000/api/products")
       .then(function(httpBodyResponse) {
@@ -22,8 +19,16 @@ async function getProduct() {
       .catch(function(error) {
           alert(error);
       });
-  }
+}
 
+/* *** AFFICHAGE PARTIE PRODUIT *** */
+/* Déclencheur */
+(async function() {
+    var product = await getProduct();
+    hydrateProduct(product);
+})()
+
+/* Récupération contenu */
 async function hydrateProduct(product) {
     /* Affichage image */
     var productImgContainer = document.getElementById("item__img");
@@ -49,8 +54,12 @@ async function hydrateProduct(product) {
     }
 }
 
-/* GESTION PANIER */
 
+
+
+/* *** GESTION PANIER *** */
+
+/* CLASSES */
 /* Classe pour l'objet panier */
 class Cart {
     constructor () {
@@ -67,27 +76,56 @@ class Cart {
     /* fonction pour ajouter une quantité à un objet existant dans le panier */
 }
 
-let cart = Cart();
+var cart = new Cart();
 
+/* Classe pour l'objet à ajouter */
 class cartProduct {
     constructor(_id, color, quantity) {
-        this._id = _id ; /* ou utiliser le nom ? */
+        this._id = _id;
         this.color = color;
         this.quantity = quantity;
     }
 }
 
-/* Déclenchement de la fonction d'ajout */
-document.getElementById("addToCart").addEventListener("click", function(e) {
-    /* CRÉER DES FONCTIONS DISTINCTES POUR CE QUI SUIT? : */
+/* FONCTIONS */
+function getProductId(product) {
+    console.log(product._id);
+    return product._id;
+}
+
+function getProductColor() {
+    var select = document.getElementById("colors"),
+        index = select.selectedIndex;
+    var productColor = select.options[ index ].value;
+    console.log(productColor);
+    return productColor;
+}
+
+function getProductQuantity() {
+    var productQuantity = document.getElementById("quantity").value;
+    console.log(productQuantity);
+    return productQuantity;
+}
+
+
+/* ACTIONS */
+/* Déclenchement action */
+document.getElementById("addToCart").addEventListener("click", async function(e) {
+    console.log("clic enregistré");
     /* récupérer l'id du produit et stocker dans var _id*/
+    let productId = getProductId(product);
+    console.log(productId);
 
     /* récupérer la couleur et stocker dans var color */
+    let productColor = getProductColor();
+    console.log(productColor);
 
     /* récupérer la quantité et stocker dans var quantity */
+    let productQuantity = getProductQuantity()
+    console.log(productQuantity);
 
     /* créer un objet newProduct */
-
-    /* ajouter le produit / la quantité au panier */
+    var newCartProduct = cartProduct(productId, productColor, productQuantity);
+    console.log(newCartProduct);
 });
 

@@ -46,6 +46,8 @@ function displayProducts(products) {
           for (_iterator = products[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
             product = _step.value;
 
+            /* (for à l'intérieur sinon la fonction ne récupère pas correctement les produits) */
+
             /* Lien */
             productLink = document.createElement("a");
             productLink.href = './product.html?id=' + product._id;

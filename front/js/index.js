@@ -17,7 +17,7 @@ function getProducts() {
 }
 
 async function displayProducts(products) {
-    for (product of products) {
+    for (product of products) {     /* (for à l'intérieur sinon la fonction ne récupère pas correctement les produits) */
         /* Lien */
         const productLink = document.createElement("a");
         productLink.href = './product.html?id=' + product._id;
