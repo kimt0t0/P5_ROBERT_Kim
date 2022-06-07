@@ -1,7 +1,9 @@
 /* *** VARIABLES *** */
 var cart = localStorage;
+var cartCounter = 0;
+var totalPrice = 0;
 var split, productId, productColor, productQuantity, productPrice, productImgUrl, total;
-
+var settingsQuantityInput, deleteText;
 
 
 /* *** FONCTIONS *** */
@@ -31,8 +33,8 @@ async function getProduct(id) {
       });
 }
 
-/* LIGNE PANIER */
-async function addLineToCart(product) {
+/* DOM DYNAMIQUE */
+async function hydrateDom(product) {
     /* Création balises */
     let cartItem = document.createElement("article");
     let cartItemImg = document.createElement("div");
@@ -49,12 +51,12 @@ async function addLineToCart(product) {
 
     let settingsQuantity = document.createElement("div");
     let settingsQuantityText = document.createElement("p");
-    let settingsQuantityInput = document.createElement("input");
+    settingsQuantityInput = document.createElement("input");
 
     let deleteContainer = document.createElement("div");
-    let deleteText = document.createElement("p");
+    deleteText = document.createElement("p");
 
-    /* Attributs et contenu des balises */
+    /* Attributs et contenu des balises créées */
     cartItem.setAttribute("class", "cart__item");
     cartItem.setAttribute("data-id", productId);
     cartItem.setAttribute("data-color", productColor);
@@ -87,7 +89,7 @@ async function addLineToCart(product) {
     deleteText.textContent = "Supprimer";
 
 
-    /* Position des balises */
+    /* Position des balises créées */
     document.getElementById("cart__items").appendChild(cartItem);
     cartItem.appendChild(cartItemImg);
     cartItemImg.appendChild(productImg);
@@ -108,14 +110,39 @@ async function addLineToCart(product) {
     cartItemSettings.appendChild(deleteContainer);
     deleteContainer.appendChild(deleteText);
 
+    /* Attributs et contenus de balises existantes */
+    document.getElementById("totalQuantity").textContent = cartCounter;
+    document.getElementById("totalPrice").textContent = totalPrice;
+
+    
+    /* MODIFICATIONS DU PANIER */
+
+    /* Modification quantité produit */
+    settingsQuantityInput.addEventListener("input", function(e) {
+        /* suppression de la quantité originale du produit dans compteur panier et prix total: */
+        cartCounter -= productQuantity;
+        totalPrice -= productQuantity * product.price;
+        /* màj nouvelle quantité du produit: */
+        productQuantity = e.target.value;
+        settingsQuantityText.textContent = "Qté : " + productQuantity;
+        /* màj compteur panier et prix total: */
+        cartCounter += Number(productQuantity);
+        totalPrice += productQuantity * product.price;
+        document.getElementById("totalQuantity").textContent = cartCounter;
+        document.getElementById("totalPrice").textContent = totalPrice;
+    });
+    /* penser à modifier le cartCounter et le totalPrice */
+    
+
+    /* Suppression d'un produit du panier */
+    deleteText.addEventListener("click", function(e) {
+        totalPrice -= productQuantity * product.price;
+        cartCounter -= productQuantity;
+        
+    })
+
 
 }
-
-/* MODIFICATIONS PANIER */
-function changeQuantity() {}
-
-function deleteProduct() {}
-
 
 
 /* *** ACTIONS *** */
@@ -123,18 +150,28 @@ function deleteProduct() {}
     /* Pour chaque élément du panier... */
     for(let i = 0; i < cart.length; i++){
         /* Obtention infos localStorage */
-        let cartKey = localStorage.key(i);
+        var cartKey = localStorage.key(i);
         var splitKey = cartKey.split(" ");
         productId = splitKey[0];
         productColor = splitKey[1];
         productQuantity = Number(cart.getItem(cartKey));
+        cartCounter += productQuantity;
 
         /* Obtention infos serveur */
         var product = await getProduct(productId);
+        totalPrice += productQuantity * product.price;
 
-        /* Fonction d'affichage de la ligne*/
-        var newLine = await addLineToCart(product);
-
-        /* Écoute des événements et update ligne */
+        /* Génération contenu page */
+        var pageContent = await hydrateDom(product);
     }
+    /* Écoute des événements et update ligne */
+    settingsQuantityInput.addEventListener("input", function(e) {
+        cart[cartKey] = productQuantity;
+        console.log(cart);
+    })
+
+    deleteText.addEventListener("click", function(e){
+        cart.removeItem(cartKey);
+        document.getElementById(productId).remove();
+    })
 })()

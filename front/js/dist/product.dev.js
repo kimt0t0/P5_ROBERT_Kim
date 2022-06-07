@@ -60,7 +60,7 @@ function getProduct() {
 
 
 (function _callee() {
-  var product;
+  var product, display;
   return regeneratorRuntime.async(function _callee$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -70,9 +70,13 @@ function getProduct() {
 
         case 2:
           product = _context2.sent;
-          hydrateProduct(product);
+          _context2.next = 5;
+          return regeneratorRuntime.awrap(hydrateProduct(product));
 
-        case 4:
+        case 5:
+          display = _context2.sent;
+
+        case 6:
         case "end":
           return _context2.stop();
       }

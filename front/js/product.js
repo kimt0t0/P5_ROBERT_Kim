@@ -25,7 +25,7 @@ async function getProduct() {
 /* Déclencheur */
 (async function() {
     var product = await getProduct();
-    hydrateProduct(product);
+    var display = await hydrateProduct(product);
 })()
 
 /* Récupération contenu */
