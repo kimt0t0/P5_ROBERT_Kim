@@ -1,6 +1,16 @@
-/* *** GÉNÉRAL *** */
+/* ***** AFFICHAGE PRODUIT ***** */
 
-/* Récupération données produit */
+/* *** VARIABLES *** */
+var cart = localStorage;
+var productId, productColor;
+var product;
+var productId;
+
+
+
+/* *** FONCTIONS *** */
+
+/* RÉCUPÉRATION PRODUIT */
 async function getProduct() {
     return fetch("http://localhost:3000/api/products")
       .then(function(httpBodyResponse) {
@@ -9,7 +19,7 @@ async function getProduct() {
       /* récupération de l'ensemble des produits: */
       .then(function(products) {
         /* récupération id dans l'url: */
-        var productId =  new URL(location.href).searchParams.get("id");
+        productId =  new URL(location.href).searchParams.get("id");
           /* recherche du produit correspondant: */
           for (product of products) { 
               if (product._id == productId) {  
@@ -21,30 +31,25 @@ async function getProduct() {
       });
 }
 
-/* *** AFFICHAGE PARTIE PRODUIT *** */
-/* Déclencheur */
-(async function() {
-    var product = await getProduct();
-    var display = await hydrateProduct(product);
-})()
-
-/* Récupération contenu */
+/* GÉNÉRATION CONTENU PAGE */
 async function hydrateProduct(product) {
-    /* Affichage image */
-    var productImgContainer = document.getElementById("item__img");
-    var productImg = document.createElement("img");
+    /* Image */
+    let productImgContainer = document.getElementById("item__img");
+    let productImg = document.createElement("img");
+
     productImgContainer.appendChild(productImg);
+
     productImg.setAttribute("src", product.imageUrl);
     productImg.setAttribute("alt", product.altTxt);
 
-    /* Affichage titre */
+    /* Titre */
     document.getElementById("title").textContent = product.name;
-    /* Affichage prix */
+    /* Prix */
     document.getElementById("price").textContent = product.price;
-    /* Affichage description */
+    /* Description */
     document.getElementById("description").textContent = product.description;
 
-    /*Menu couleurs */
+    /*Couleurs */
     var scrollColors = document.getElementById("colors");
     for (color of product.colors) {
         var newColor = document.createElement("option");
@@ -54,68 +59,63 @@ async function hydrateProduct(product) {
     }
 }
 
-
-
-
-/* *** GESTION PANIER *** */
-
-/* Variables */
-var cart = localStorage;
-
-/* FONCTIONS */
-function getProductId(product) {
+/* GESTION PANIER */
+async function getProductId(product) {
     return product._id;
 }
 
-function getProductColor() {
-    var select = document.getElementById("colors"),
+async function getProductColor() {
+    let select = document.getElementById("colors"),
         index = select.selectedIndex;
-    var productColor = select.options[ index ].value;
-    return productColor;
+    return select.options[ index ].value;
 }
 
-function getProductQuantity() {
-    var productQuantity = document.getElementById("quantity").value;
-    return productQuantity;
+async function getProductQuantity() {
+    return  Number(document.getElementById("quantity").value);
 }
 
-function cartKey (id, color) {
+async function generateCartKey (id, color) {
     return id + " " + color;
 }
 
-function addToCart (cartKey, quantity) {
+async function addToCart (cartKey, quantity) {
     if (cart[cartKey]) {
-        cart[cartKey] += quantity;
-        console.log(cart);
+        cart[cartKey] += Number(quantity);
     } 
     else {
-        cart[cartKey] = quantity;
-        console.log(cart);
-    }}
+        cart[cartKey] = Number(quantity);
+    }
+}
 
-/* Vérif: function checkCart (cart) {
-    console.log(cart);
-} */
+/* *** ACTIONS *** */
+/* AFFICHAGE */
+(async function() {
+    product = await getProduct();
+    var display = await hydrateProduct(product);
+})()
 
-/* ACTIONS */
-/* Déclenchement action */
+
+/* PANIER */
 document.getElementById("addToCart").addEventListener("click", async function(e) {
     /* récupérer l'id du produit et stocker dans var _id*/
-    let productId = getProductId(product);
+    let productId = await getProductId(product);
 
     /* récupérer la couleur et stocker dans var color */
-    let productColor = getProductColor();
+    let productColor = await getProductColor();
 
     /* récupérer la quantité et stocker dans var quantity */
-    let productQuantity = getProductQuantity()
+    let productQuantity = await getProductQuantity()
 
     /* création des clés */
-    cartKey = cartKey(productId, productColor);
+    cartKey = await generateCartKey(productId, productColor);
     
     /* ajout au panier */
-    addToCart(cartKey, productQuantity);
-
-    /* Vérif: checkCart(); */
-    
+    if (product.colors.includes(productColor) && productQuantity > 0) {
+        addToCart(cartKey, productQuantity);
+    } 
+    else {
+        alert("Toutes nos excuses, le kanap n'a pas pu être ajouté au panier! \nVous avez probablement oublié de préciser une couleur ou une quantité :-)\n\nN'hésitez pas à contacter notre équipe en cas de problème.")
+    }
+          
 });
 

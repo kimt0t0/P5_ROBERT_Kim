@@ -2,20 +2,13 @@
 var cart = localStorage;
 var cartCounter = 0;
 var totalPrice = 0;
-var split, productId, productColor, productQuantity, productPrice, productImgUrl, total;
+var productId, productColor, productQuantity, productImgUrl;
 var settingsQuantityInput, deleteText;
 
 
 /* *** FONCTIONS *** */
 
 /* GÉNÉRAL */
-/* Récupération id et couleur du produit */
-async function splitCartProduct(cartProduct) {
-    split = cartProduct.split(" ");
-    console.log(split);
-    return split;
-}
-
 /* Accès aux infos produit sur serveur */
 async function getProduct(id) {
     return fetch("http://localhost:3000/api/products")
@@ -33,8 +26,17 @@ async function getProduct(id) {
       });
 }
 
+/* Attributs du formulaire */
+async function setFormAttributes(inputName, regexModel, min, max, title) {
+    inputName.setAttribute("pattern", regexModel);
+    inputName.setAttribute("min-length", min);
+    inputName.setAttribute("max-length", max);
+    inputName.setAttribute("title", title);
+}
+
+
 /* DOM DYNAMIQUE */
-async function hydrateDom(product) {
+async function hydrateDom(product, cartCounter, totalPrice, productQuantity) {
     /* Création balises */
     let cartItem = document.createElement("article");
     let cartItemImg = document.createElement("div");
@@ -114,64 +116,68 @@ async function hydrateDom(product) {
     document.getElementById("totalQuantity").textContent = cartCounter;
     document.getElementById("totalPrice").textContent = totalPrice;
 
-    
-    /* MODIFICATIONS DU PANIER */
+        /* MODIFICATIONS DU PANIER */
 
-    /* Modification quantité produit */
-    settingsQuantityInput.addEventListener("input", function(e) {
-        /* suppression de la quantité originale du produit dans compteur panier et prix total: */
-        cartCounter -= productQuantity;
-        totalPrice -= productQuantity * product.price;
-        /* màj nouvelle quantité du produit: */
+    /* /* Modification quantité: */
+    settingsQuantityInput.addEventListener("change", function(e) {
+        /* (suppression de la quantité originale du produit dans compteur panier et prix total: ) */
+        cartCounter -= Number(productQuantity);
+        totalPrice -= Number(productQuantity) * Number(product.price);
+        /* (màj nouvelle quantité du produit: ) */
         productQuantity = e.target.value;
         settingsQuantityText.textContent = "Qté : " + productQuantity;
-        /* màj compteur panier et prix total: */
+        /* (màj compteur panier et prix total: ) */
         cartCounter += Number(productQuantity);
-        totalPrice += productQuantity * product.price;
+        totalPrice += Number(productQuantity) * Number(product.price);
         document.getElementById("totalQuantity").textContent = cartCounter;
         document.getElementById("totalPrice").textContent = totalPrice;
+        /* (màj local storage: ) */
+        cart[cartKey] = productQuantity;
     });
-    /* penser à modifier le cartCounter et le totalPrice */
     
-
-    /* Suppression d'un produit du panier */
+    /* Suppression d'un produit du panier: */
     deleteText.addEventListener("click", function(e) {
-        totalPrice -= productQuantity * product.price;
-        cartCounter -= productQuantity;
-        
-    })
+        cartCounter -= Number(productQuantity);
+        totalPrice -= Number(productQuantity) * Number(product.price);
+        let cartKey = productId + " " + productColor;
+        cart.removeItem(cartKey);
+        console.log(document.getElementById(productId));
+    });
 
+    /* MODIFICATIONS DU FORMULAIRE */
+    let firstName = document.getElementById('firstName');
+    let lastName = document.getElementById('lastName');
+    let address = document.getElementById('address');
+    let city = document.getElementById('city');
 
+    setFormAttributes(firstName, "[-a-zA-Z]", 2, 35, "Entrez uniquement des lettres et '-'.");
+    setFormAttributes(lastName, "[-a-zA-Z]", 2, 35, "Entrez uniquement des lettres et '-'.");
+    setFormAttributes(address, "[0-9]{1, 4}[-a-zA-Z]", 5, 35, "Entrez une adresse.\nExemple: 14, rue des Sufragettes");
+    setFormAttributes(city, "[- a-zA-Z]", 2, 50, "Entrez uniquement des lettres, '-' et ' '");
 }
-
 
 /* *** ACTIONS *** */
 (async function() {
-    /* Pour chaque élément du panier... */
+    /* POUR CHAQUE PRODUIT DU PANIER... */
     for(let i = 0; i < cart.length; i++){
-        /* Obtention infos localStorage */
+        /* Infos en local storage: */
         var cartKey = localStorage.key(i);
         var splitKey = cartKey.split(" ");
         productId = splitKey[0];
         productColor = splitKey[1];
-        productQuantity = Number(cart.getItem(cartKey));
-        cartCounter += productQuantity;
+        /* Quantité (inpupt): */
+        productQuantity = cart.getItem(cartKey);
+        /* Màj compteur d'items */
+        cartCounter += Number(productQuantity);
 
-        /* Obtention infos serveur */
+        /* Infos serveur: */
         var product = await getProduct(productId);
-        totalPrice += productQuantity * product.price;
+        totalPrice += Number(productQuantity) * Number(product.price);
 
-        /* Génération contenu page */
-        var pageContent = await hydrateDom(product);
+        /* Génération contenu page au loading: */
+        var pageContent = await hydrateDom(product, cartCounter, totalPrice, productQuantity);
     }
-    /* Écoute des événements et update ligne */
-    settingsQuantityInput.addEventListener("input", function(e) {
-        cart[cartKey] = productQuantity;
-        console.log(cart);
-    })
 
-    deleteText.addEventListener("click", function(e){
-        cart.removeItem(cartKey);
-        document.getElementById(productId).remove();
-    })
 })()
+
+        
