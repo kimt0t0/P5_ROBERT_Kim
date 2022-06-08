@@ -1,7 +1,9 @@
 /* *** VARIABLES *** */
 var cart = localStorage;
+
 var cartCounter = 0;
 var totalPrice = 0;
+
 var productId, productColor, productQuantity, productImgUrl;
 var settingsQuantityInput, deleteText;
 
@@ -36,7 +38,7 @@ async function setFormAttributes(inputName, regexModel, min, max, title) {
 
 
 /* DOM DYNAMIQUE */
-async function hydrateDom(product, cartCounter, totalPrice, productQuantity) {
+async function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) {
     /* Création balises */
     let cartItem = document.createElement("article");
     let cartItemImg = document.createElement("div");
@@ -132,7 +134,9 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity) {
         document.getElementById("totalQuantity").textContent = cartCounter;
         document.getElementById("totalPrice").textContent = totalPrice;
         /* (màj local storage: ) */
+        console.log("ancienne quantité: " + cart[cartKey]);
         cart[cartKey] = productQuantity;
+        console.log("nouvelle quantité: " + cart[cartKey]);
     });
     
     /* Suppression d'un produit du panier: */
@@ -144,16 +148,37 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity) {
         console.log(document.getElementById(productId));
     });
 
-    /* MODIFICATIONS DU FORMULAIRE */
-    let firstName = document.getElementById('firstName');
+    /* SUIVI VÉRIFICATIONS DU FORMULAIRE */
+    let userForm = document.getElementById("cart__order__form");
+    userForm.addEventListener("submit", function(e) {
+        var userOrder = [];
+
+        let userInputs = userForm.getElementsByTagName("input");
+        let firstName = userInputs.getElementById("firstName");
+        let lastName = userInputs.getElementById("lastName");
+        let address = userInputs.getElementById("address");
+        let city = userInputs.getElementById("city");
+        let email = userInputs.getElementById("email");
+        if (
+            /* ... */
+        ) {
+            for (let i = 0; userInputs.length; i++) {
+                userOrder.append(userInputs[i]);
+                console.log("informations commande mises à jour: " + userOrder);
+            }}
+    });
+
+    /* let firstName = document.getElementById('firstName');
     let lastName = document.getElementById('lastName');
     let address = document.getElementById('address');
     let city = document.getElementById('city');
+    let email = document.getElementById('email');
 
-    setFormAttributes(firstName, "[-a-zA-Z]", 2, 35, "Entrez uniquement des lettres et '-'.");
-    setFormAttributes(lastName, "[-a-zA-Z]", 2, 35, "Entrez uniquement des lettres et '-'.");
-    setFormAttributes(address, "[0-9]{1, 4}[-a-zA-Z]", 5, 35, "Entrez une adresse.\nExemple: 14, rue des Sufragettes");
-    setFormAttributes(city, "[- a-zA-Z]", 2, 50, "Entrez uniquement des lettres, '-' et ' '");
+    setFormAttributes(firstName, "[\\w\\D]{2, 35}", 2, 35, "Entrez uniquement des lettres et '-'.");
+    setFormAttributes(lastName, "[\\w\\D]{2, 35}", 2, 35, "Entrez uniquement des lettres et '-'.");
+    setFormAttributes(address, "[\\d]{0, 4}[, ]{0, 1}\[\\w\\D]{4, 35}", 5, 35, "Entrez une adresse.\nExemple: 14, rue des Sufragettes");
+    setFormAttributes(city, "[\\w\\D]{2, 50}", 2, 50, "Entrez uniquement des lettres, '-' et ' '");
+    setFormAttributes(email, "[\\w]{2, 50}[@]{1}{\\w]{2, 20}[.]{1}[com|fr|net|org]{1}", 2, 50, "Entrez une adresse email valide."); */
 }
 
 /* *** ACTIONS *** */
@@ -175,8 +200,9 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity) {
         totalPrice += Number(productQuantity) * Number(product.price);
 
         /* Génération contenu page au loading: */
-        var pageContent = await hydrateDom(product, cartCounter, totalPrice, productQuantity);
+        var pageContent = await hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey);
     }
+    console.log(userForm);
 
 })()
 

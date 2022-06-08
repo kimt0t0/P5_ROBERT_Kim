@@ -80,8 +80,8 @@ function setFormAttributes(inputName, regexModel, min, max, title) {
 /* DOM DYNAMIQUE */
 
 
-function hydrateDom(product, cartCounter, totalPrice, productQuantity) {
-  var cartItem, cartItemImg, productImg, cartItemContent, cartItemContentDescr, cartItemContentTitle, cartItemContentColor, cartItemContentPrice, cartItemSettings, settingsQuantity, settingsQuantityText, deleteContainer, firstName, lastName, address, city;
+function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) {
+  var cartItem, cartItemImg, productImg, cartItemContent, cartItemContentDescr, cartItemContentTitle, cartItemContentColor, cartItemContentPrice, cartItemSettings, settingsQuantity, settingsQuantityText, deleteContainer, userForm;
   return regeneratorRuntime.async(function hydrateDom$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -166,7 +166,9 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity) {
             document.getElementById("totalPrice").textContent = totalPrice;
             /* (màj local storage: ) */
 
+            console.log("ancienne quantité: " + cart[cartKey]);
             cart[cartKey] = productQuantity;
+            console.log("nouvelle quantité: " + cart[cartKey]);
           });
           /* Suppression d'un produit du panier: */
 
@@ -177,18 +179,28 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity) {
             cart.removeItem(cartKey);
             console.log(document.getElementById(productId));
           });
-          /* MODIFICATIONS DU FORMULAIRE */
+          /* SUIVI VÉRIFICATIONS DU FORMULAIRE */
 
-          firstName = document.getElementById('firstName');
-          lastName = document.getElementById('lastName');
-          address = document.getElementById('address');
-          city = document.getElementById('city');
-          setFormAttributes(firstName, "[-a-zA-Z]", 2, 35, "Entrez uniquement des lettres et '-'.");
-          setFormAttributes(lastName, "[-a-zA-Z]", 2, 35, "Entrez uniquement des lettres et '-'.");
-          setFormAttributes(address, "[0-9]{1, 4}[-a-zA-Z]", 5, 35, "Entrez une adresse.\nExemple: 14, rue des Sufragettes");
-          setFormAttributes(city, "[- a-zA-Z]", 2, 50, "Entrez uniquement des lettres, '-' et ' '");
+          userForm = document.getElementById("cart__order__form");
+          userForm.addEventListener("submit", function (e) {
+            var userInputs = userForm.getElementsByTagName("input");
 
-        case 63:
+            for (var i = 0; userInputs.length; i++) {
+              console.log(userInputs[i].value);
+            }
+          });
+          /* let firstName = document.getElementById('firstName');
+          let lastName = document.getElementById('lastName');
+          let address = document.getElementById('address');
+          let city = document.getElementById('city');
+          let email = document.getElementById('email');
+            setFormAttributes(firstName, "[\\w\\D]{2, 35}", 2, 35, "Entrez uniquement des lettres et '-'.");
+          setFormAttributes(lastName, "[\\w\\D]{2, 35}", 2, 35, "Entrez uniquement des lettres et '-'.");
+          setFormAttributes(address, "[\\d]{0, 4}[, ]{0, 1}\[\\w\\D]{4, 35}", 5, 35, "Entrez une adresse.\nExemple: 14, rue des Sufragettes");
+          setFormAttributes(city, "[\\w\\D]{2, 50}", 2, 50, "Entrez uniquement des lettres, '-' et ' '");
+          setFormAttributes(email, "[\\w]{2, 50}[@]{1}{\\w]{2, 20}[.]{1}[com|fr|net|org]{1}", 2, 50, "Entrez une adresse email valide."); */
+
+        case 57:
         case "end":
           return _context3.stop();
       }
@@ -234,7 +246,7 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity) {
           /* Génération contenu page au loading: */
 
           _context4.next = 14;
-          return regeneratorRuntime.awrap(hydrateDom(product, cartCounter, totalPrice, productQuantity));
+          return regeneratorRuntime.awrap(hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey));
 
         case 14:
           pageContent = _context4.sent;
@@ -245,6 +257,9 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity) {
           break;
 
         case 18:
+          console.log(userForm);
+
+        case 19:
         case "end":
           return _context4.stop();
       }
