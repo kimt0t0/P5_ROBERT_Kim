@@ -5,7 +5,6 @@ var cartCounter = 0;
 var totalPrice = 0;
 
 var productId, productColor, productQuantity, productImgUrl;
-var settingsQuantityInput, deleteText;
 
 
 /* *** FONCTIONS *** */
@@ -55,10 +54,10 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
 
     let settingsQuantity = document.createElement("div");
     let settingsQuantityText = document.createElement("p");
-    settingsQuantityInput = document.createElement("input");
+    let settingsQuantityInput = document.createElement("input");
 
     let deleteContainer = document.createElement("div");
-    deleteText = document.createElement("p");
+    let deleteText = document.createElement("p");
 
     /* Attributs et contenu des balises créées */
     cartItem.setAttribute("class", "cart__item");
@@ -98,14 +97,14 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
     cartItem.appendChild(cartItemImg);
     cartItemImg.appendChild(productImg);
 
-    document.getElementById("cart__items").appendChild(cartItemContent);
+    cartItem.appendChild(cartItemContent);
     cartItemContent.appendChild(cartItemContentDescr);
     cartItemContentDescr.appendChild(cartItemContentTitle);
     cartItemContentDescr.appendChild(cartItemContentColor);
     cartItemContentDescr.appendChild(cartItemContentPrice);
 
 
-    document.getElementById("cart__items").appendChild(cartItemSettings);
+    cartItemContent.appendChild(cartItemSettings);
 
     cartItemSettings.appendChild(settingsQuantity);
     settingsQuantity.appendChild(settingsQuantityText);
@@ -145,7 +144,7 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
         totalPrice -= Number(productQuantity) * Number(product.price);
         let cartKey = productId + " " + productColor;
         cart.removeItem(cartKey);
-        document.getElementById(productId).remove(); /* ne fonctionne pas directement au clic... testé aussi avec Element.closest("article") */
+        e.target.closest("article").remove();
     });
 
     /* SUIVI VÉRIFICATIONS DU FORMULAIRE */
@@ -210,7 +209,6 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
         /* Génération contenu page au loading: */
         var pageContent = await hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey);
     }
-    console.log(userForm);
 
 })()
 

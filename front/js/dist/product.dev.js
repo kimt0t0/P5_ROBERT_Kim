@@ -186,7 +186,7 @@ function addToCart(cartKey, quantity) {
       switch (_context7.prev = _context7.next) {
         case 0:
           if (cart[cartKey]) {
-            cart[cartKey] += Number(quantity);
+            cart[cartKey] = Number(cart[cartKey]) + Number(quantity);
           } else {
             cart[cartKey] = Number(quantity);
           }

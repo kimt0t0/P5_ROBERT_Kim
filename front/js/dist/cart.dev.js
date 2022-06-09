@@ -5,7 +5,6 @@ var cart = localStorage;
 var cartCounter = 0;
 var totalPrice = 0;
 var productId, productColor, productQuantity, productImgUrl;
-var settingsQuantityInput, deleteText;
 /* *** FONCTIONS *** */
 
 /* GÉNÉRAL */
@@ -81,7 +80,7 @@ function setFormAttributes(inputName, regexModel, min, max, title) {
 
 
 function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) {
-  var cartItem, cartItemImg, productImg, cartItemContent, cartItemContentDescr, cartItemContentTitle, cartItemContentColor, cartItemContentPrice, cartItemSettings, settingsQuantity, settingsQuantityText, deleteContainer, userForm;
+  var cartItem, cartItemImg, productImg, cartItemContent, cartItemContentDescr, cartItemContentTitle, cartItemContentColor, cartItemContentPrice, cartItemSettings, settingsQuantity, settingsQuantityText, settingsQuantityInput, deleteContainer, deleteText, userForm;
   return regeneratorRuntime.async(function hydrateDom$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -131,12 +130,12 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
           document.getElementById("cart__items").appendChild(cartItem);
           cartItem.appendChild(cartItemImg);
           cartItemImg.appendChild(productImg);
-          document.getElementById("cart__items").appendChild(cartItemContent);
+          cartItem.appendChild(cartItemContent);
           cartItemContent.appendChild(cartItemContentDescr);
           cartItemContentDescr.appendChild(cartItemContentTitle);
           cartItemContentDescr.appendChild(cartItemContentColor);
           cartItemContentDescr.appendChild(cartItemContentPrice);
-          document.getElementById("cart__items").appendChild(cartItemSettings);
+          cartItemContent.appendChild(cartItemSettings);
           cartItemSettings.appendChild(settingsQuantity);
           settingsQuantity.appendChild(settingsQuantityText);
           settingsQuantity.appendChild(settingsQuantityInput);
@@ -177,8 +176,7 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
             totalPrice -= Number(productQuantity) * Number(product.price);
             var cartKey = productId + " " + productColor;
             cart.removeItem(cartKey);
-            document.getElementById(productId).remove();
-            /* ne fonctionne pas directement au clic... testé aussi avec Element.closest("article") */
+            e.target.closest("article").remove();
           });
           /* SUIVI VÉRIFICATIONS DU FORMULAIRE */
 
@@ -274,9 +272,6 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
           break;
 
         case 18:
-          console.log(userForm);
-
-        case 19:
         case "end":
           return _context4.stop();
       }

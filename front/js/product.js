@@ -75,7 +75,7 @@ async function generateCartKey (id, color) {
 
 async function addToCart (cartKey, quantity) {
     if (cart[cartKey]) {
-        cart[cartKey] += Number(quantity);
+        cart[cartKey] = Number(cart[cartKey]) + Number(quantity);
     } 
     else {
         cart[cartKey] = Number(quantity);
