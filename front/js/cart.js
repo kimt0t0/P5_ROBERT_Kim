@@ -36,7 +36,7 @@ async function setFormAttributes(inputName, regexModel, min, max, title) {
 }
 
 
-/* DOM DYNAMIQUE */
+/* *** DOM DYNAMIQUE ***  */
 async function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) {
     /* Création balises */
     let cartItem = document.createElement("article");
@@ -147,45 +147,29 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
         e.target.closest("article").remove();
     });
 
-    /* SUIVI VÉRIFICATIONS DU FORMULAIRE */
+    /* Suivi vérification formulaire */
     let userForm = document.getElementById("cart__order__form");
     userForm.addEventListener("submit", function(e) {
-        var userOrder = [];
+        e.preventDefault();
 
-        let userInputs = userForm.getElementsByTagName("input");
-        let firstName = userInputs.getElementById("firstName");
-        let lastName = userInputs.getElementById("lastName");
-        let address = userInputs.getElementById("address");
-        let city = userInputs.getElementById("city");
-        let email = userInputs.getElementById("email");
-
-        let userInputsList = [firstName, lastName, address, city, email];
-        let testRegexp = []
-        if ( firstName.value != /[\w\D- ']{2, 35}/
-        ) {
-            for (let i = 0; userInputsList.length; i++) {
-                let test = testRegexp[i].test(userInputsList[i]);
-                if (test == true) {
-                    /* pass */
-                }
-                else {
-                    alert("Veuillez compléter tous les champs au bon format pour finaliser votre commande :-)");
-                }
-            }
+        let firstName = document.getElementById("firstName");
+        let regWords = /^[a-zA-Z-\s\']+$/;
+        if (firstName.value.trim() == "") { // (trim retire espaces au début et fin de l'input)
+            let errorFName = document.getElementById("firstNameErrorMsg");
+            errorFName.textContent = "Veuillez compléter ce champ.";
+            errorFName.style.color = "red";
+            e.preventDefault();
+        } else if (regWords.test(firstName.value) == false) {
+            let errorFName = document.getElementById("firstNameErrorMsg");
+            errorFName.textContent = "Le nom doit comporter des lettres, tirets et apostrophes uniquement.";
+            errorFName.style.color = "red";
+            e.preventDefault();
+        }
+        else {
+            console.log("commande ok");
         }
     });
 
-    /* let firstName = document.getElementById('firstName');
-    let lastName = document.getElementById('lastName');
-    let address = document.getElementById('address');
-    let city = document.getElementById('city');
-    let email = document.getElementById('email');
-
-    setFormAttributes(firstName, "[\\w\\D]{2, 35}", 2, 35, "Entrez uniquement des lettres et '-'.");
-    setFormAttributes(lastName, "[\\w\\D]{2, 35}", 2, 35, "Entrez uniquement des lettres et '-'.");
-    setFormAttributes(address, "[\\d]{0, 4}[, ]{0, 1}\[\\w\\D]{4, 35}", 5, 35, "Entrez une adresse.\nExemple: 14, rue des Sufragettes");
-    setFormAttributes(city, "[\\w\\D]{2, 50}", 2, 50, "Entrez uniquement des lettres, '-' et ' '");
-    setFormAttributes(email, "[\\w]{2, 50}[@]{1}{\\w]{2, 20}[.]{1}[com|fr|net|org]{1}", 2, 50, "Entrez une adresse email valide."); */
 }
 
 /* *** ACTIONS *** */
