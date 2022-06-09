@@ -75,7 +75,7 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
     cartItemContentDescr.setAttribute("class", "cart__item__content__description")
     cartItemContentTitle.textContent = product.name;
     cartItemContentColor.textContent = productColor;
-    cartItemContentPrice.textContent = product.price + " €";
+    cartItemContentPrice.textContent = Number(product.price) + " €";
 
     cartItemSettings.setAttribute("class", "cart__item__content__settings");
     
@@ -145,7 +145,7 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
         totalPrice -= Number(productQuantity) * Number(product.price);
         let cartKey = productId + " " + productColor;
         cart.removeItem(cartKey);
-        console.log(document.getElementById(productId));
+        document.getElementById(productId).remove(); /* ne fonctionne pas directement au clic... testé aussi avec Element.closest("article") */
     });
 
     /* SUIVI VÉRIFICATIONS DU FORMULAIRE */
@@ -159,13 +159,21 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
         let address = userInputs.getElementById("address");
         let city = userInputs.getElementById("city");
         let email = userInputs.getElementById("email");
-        if (
-            /* ... */
+
+        let userInputsList = [firstName, lastName, address, city, email];
+        let testRegexp = []
+        if ( firstName.value != /[\w\D- ']{2, 35}/
         ) {
-            for (let i = 0; userInputs.length; i++) {
-                userOrder.append(userInputs[i]);
-                console.log("informations commande mises à jour: " + userOrder);
-            }}
+            for (let i = 0; userInputsList.length; i++) {
+                let test = testRegexp[i].test(userInputsList[i]);
+                if (test == true) {
+                    /* pass */
+                }
+                else {
+                    alert("Veuillez compléter tous les champs au bon format pour finaliser votre commande :-)");
+                }
+            }
+        }
     });
 
     /* let firstName = document.getElementById('firstName');

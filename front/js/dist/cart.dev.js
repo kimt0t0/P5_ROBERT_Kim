@@ -113,7 +113,7 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
           cartItemContentDescr.setAttribute("class", "cart__item__content__description");
           cartItemContentTitle.textContent = product.name;
           cartItemContentColor.textContent = productColor;
-          cartItemContentPrice.textContent = product.price + " €";
+          cartItemContentPrice.textContent = Number(product.price) + " €";
           cartItemSettings.setAttribute("class", "cart__item__content__settings");
           settingsQuantity.setAttribute("class", "cart__item__content__settings__quantity");
           settingsQuantityText.textContent = "Qté : " + productQuantity;
@@ -177,16 +177,33 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
             totalPrice -= Number(productQuantity) * Number(product.price);
             var cartKey = productId + " " + productColor;
             cart.removeItem(cartKey);
-            console.log(document.getElementById(productId));
+            document.getElementById(productId).remove();
+            /* ne fonctionne pas directement au clic... testé aussi avec Element.closest("article") */
           });
           /* SUIVI VÉRIFICATIONS DU FORMULAIRE */
 
           userForm = document.getElementById("cart__order__form");
           userForm.addEventListener("submit", function (e) {
+            var userOrder = [];
             var userInputs = userForm.getElementsByTagName("input");
+            var firstName = userInputs.getElementById("firstName");
+            var lastName = userInputs.getElementById("lastName");
+            var address = userInputs.getElementById("address");
+            var city = userInputs.getElementById("city");
+            var email = userInputs.getElementById("email");
+            var userInputsList = [firstName, lastName, address, city, email];
+            var testRegexp = [];
 
-            for (var i = 0; userInputs.length; i++) {
-              console.log(userInputs[i].value);
+            if (firstName.value != /[\w\D- ']{2, 35}/) {
+              for (var i = 0; userInputsList.length; i++) {
+                var test = testRegexp[i].test(userInputsList[i]);
+
+                if (test == true) {
+                  /* pass */
+                } else {
+                  alert("Veuillez compléter tous les champs au bon format pour finaliser votre commande :-)");
+                }
+              }
             }
           });
           /* let firstName = document.getElementById('firstName');

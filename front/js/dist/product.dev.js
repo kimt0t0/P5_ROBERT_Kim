@@ -16,46 +16,18 @@ function getProduct() {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          return _context.abrupt("return", fetch("http://localhost:3000/api/products").then(function (httpBodyResponse) {
+          productId = new URL(location.href).searchParams.get("id");
+          return _context.abrupt("return", fetch("http://localhost:3000/api/products/" + productId).then(function (httpBodyResponse) {
             return httpBodyResponse.json();
           })
           /* récupération de l'ensemble des produits: */
-          .then(function (products) {
-            /* récupération id dans l'url: */
-            productId = new URL(location.href).searchParams.get("id");
-            /* recherche du produit correspondant: */
-
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-              for (var _iterator = products[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                product = _step.value;
-
-                if (product._id == productId) {
-                  return product;
-                }
-              }
-            } catch (err) {
-              _didIteratorError = true;
-              _iteratorError = err;
-            } finally {
-              try {
-                if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-                  _iterator["return"]();
-                }
-              } finally {
-                if (_didIteratorError) {
-                  throw _iteratorError;
-                }
-              }
-            }
+          .then(function (product) {
+            return product;
           })["catch"](function (error) {
             alert(error);
           }));
 
-        case 1:
+        case 2:
         case "end":
           return _context.stop();
       }
@@ -66,7 +38,7 @@ function getProduct() {
 
 
 function hydrateProduct(product) {
-  var productImgContainer, productImg, scrollColors, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, newColor;
+  var productImgContainer, productImg, scrollColors, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, newColor;
 
   return regeneratorRuntime.async(function hydrateProduct$(_context2) {
     while (1) {
@@ -90,13 +62,13 @@ function hydrateProduct(product) {
           /*Couleurs */
 
           scrollColors = document.getElementById("colors");
-          _iteratorNormalCompletion2 = true;
-          _didIteratorError2 = false;
-          _iteratorError2 = undefined;
+          _iteratorNormalCompletion = true;
+          _didIteratorError = false;
+          _iteratorError = undefined;
           _context2.prev = 12;
 
-          for (_iterator2 = product.colors[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-            color = _step2.value;
+          for (_iterator = product.colors[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            color = _step.value;
             newColor = document.createElement("option");
             newColor.setAttribute("value", color);
             newColor.textContent = color;
@@ -109,26 +81,26 @@ function hydrateProduct(product) {
         case 16:
           _context2.prev = 16;
           _context2.t0 = _context2["catch"](12);
-          _didIteratorError2 = true;
-          _iteratorError2 = _context2.t0;
+          _didIteratorError = true;
+          _iteratorError = _context2.t0;
 
         case 20:
           _context2.prev = 20;
           _context2.prev = 21;
 
-          if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
-            _iterator2["return"]();
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
           }
 
         case 23:
           _context2.prev = 23;
 
-          if (!_didIteratorError2) {
+          if (!_didIteratorError) {
             _context2.next = 26;
             break;
           }
 
-          throw _iteratorError2;
+          throw _iteratorError;
 
         case 26:
           return _context2.finish(23);

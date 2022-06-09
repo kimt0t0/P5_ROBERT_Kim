@@ -12,19 +12,14 @@ var productId;
 
 /* RÉCUPÉRATION PRODUIT */
 async function getProduct() {
-    return fetch("http://localhost:3000/api/products")
+    productId =  new URL(location.href).searchParams.get("id");
+    return fetch("http://localhost:3000/api/products/" + productId)
       .then(function(httpBodyResponse) {
         return httpBodyResponse.json();
       })
       /* récupération de l'ensemble des produits: */
-      .then(function(products) {
-        /* récupération id dans l'url: */
-        productId =  new URL(location.href).searchParams.get("id");
-          /* recherche du produit correspondant: */
-          for (product of products) { 
-              if (product._id == productId) {  
-                return product;}
-          }
+      .then(function(product) {
+        return product;
       })
       .catch(function(error) {
           alert(error);
