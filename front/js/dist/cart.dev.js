@@ -100,6 +100,22 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
           settingsQuantityInput = document.createElement("input");
           deleteContainer = document.createElement("div");
           deleteText = document.createElement("p");
+          /* Position des balises créées */
+
+          document.getElementById("cart__items").appendChild(cartItem);
+          cartItem.appendChild(cartItemImg);
+          cartItemImg.appendChild(productImg);
+          cartItem.appendChild(cartItemContent);
+          cartItemContent.appendChild(cartItemContentDescr);
+          cartItemContentDescr.appendChild(cartItemContentTitle);
+          cartItemContentDescr.appendChild(cartItemContentColor);
+          cartItemContentDescr.appendChild(cartItemContentPrice);
+          cartItemContent.appendChild(cartItemSettings);
+          cartItemSettings.appendChild(settingsQuantity);
+          settingsQuantity.appendChild(settingsQuantityText);
+          settingsQuantity.appendChild(settingsQuantityInput);
+          cartItemSettings.appendChild(deleteContainer);
+          deleteContainer.appendChild(deleteText);
           /* Attributs et contenu des balises créées */
 
           cartItem.setAttribute("class", "cart__item");
@@ -125,22 +141,6 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
           deleteContainer.setAttribute("class", "cart__item__content__settings__delete");
           deleteText.setAttribute("class", "deleteItem");
           deleteText.textContent = "Supprimer";
-          /* Position des balises créées */
-
-          document.getElementById("cart__items").appendChild(cartItem);
-          cartItem.appendChild(cartItemImg);
-          cartItemImg.appendChild(productImg);
-          cartItem.appendChild(cartItemContent);
-          cartItemContent.appendChild(cartItemContentDescr);
-          cartItemContentDescr.appendChild(cartItemContentTitle);
-          cartItemContentDescr.appendChild(cartItemContentColor);
-          cartItemContentDescr.appendChild(cartItemContentPrice);
-          cartItemContent.appendChild(cartItemSettings);
-          cartItemSettings.appendChild(settingsQuantity);
-          settingsQuantity.appendChild(settingsQuantityText);
-          settingsQuantity.appendChild(settingsQuantityInput);
-          cartItemSettings.appendChild(deleteContainer);
-          deleteContainer.appendChild(deleteText);
           /* Attributs et contenus de balises existantes */
 
           document.getElementById("totalQuantity").textContent = cartCounter;
@@ -176,6 +176,8 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
             totalPrice -= Number(productQuantity) * Number(product.price);
             var cartKey = productId + " " + productColor;
             cart.removeItem(cartKey);
+            document.getElementById("totalQuantity").textContent = cartCounter;
+            document.getElementById("totalPrice").textContent = totalPrice;
             e.target.closest("article").remove();
           });
           /* Suivi vérification formulaire */

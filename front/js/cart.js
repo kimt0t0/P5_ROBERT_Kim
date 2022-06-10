@@ -59,6 +59,29 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
     let deleteContainer = document.createElement("div");
     let deleteText = document.createElement("p");
 
+
+    /* Position des balises créées */
+    document.getElementById("cart__items").appendChild(cartItem);
+    cartItem.appendChild(cartItemImg);
+    cartItemImg.appendChild(productImg);
+
+    cartItem.appendChild(cartItemContent);
+    cartItemContent.appendChild(cartItemContentDescr);
+    cartItemContentDescr.appendChild(cartItemContentTitle);
+    cartItemContentDescr.appendChild(cartItemContentColor);
+    cartItemContentDescr.appendChild(cartItemContentPrice);
+
+
+    cartItemContent.appendChild(cartItemSettings);
+
+    cartItemSettings.appendChild(settingsQuantity);
+    settingsQuantity.appendChild(settingsQuantityText);
+    settingsQuantity.appendChild(settingsQuantityInput);
+
+    cartItemSettings.appendChild(deleteContainer);
+    deleteContainer.appendChild(deleteText);
+
+
     /* Attributs et contenu des balises créées */
     cartItem.setAttribute("class", "cart__item");
     cartItem.setAttribute("data-id", productId);
@@ -91,28 +114,6 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
     deleteText.setAttribute("class", "deleteItem");
     deleteText.textContent = "Supprimer";
 
-
-    /* Position des balises créées */
-    document.getElementById("cart__items").appendChild(cartItem);
-    cartItem.appendChild(cartItemImg);
-    cartItemImg.appendChild(productImg);
-
-    cartItem.appendChild(cartItemContent);
-    cartItemContent.appendChild(cartItemContentDescr);
-    cartItemContentDescr.appendChild(cartItemContentTitle);
-    cartItemContentDescr.appendChild(cartItemContentColor);
-    cartItemContentDescr.appendChild(cartItemContentPrice);
-
-
-    cartItemContent.appendChild(cartItemSettings);
-
-    cartItemSettings.appendChild(settingsQuantity);
-    settingsQuantity.appendChild(settingsQuantityText);
-    settingsQuantity.appendChild(settingsQuantityInput);
-
-    cartItemSettings.appendChild(deleteContainer);
-    deleteContainer.appendChild(deleteText);
-
     /* Attributs et contenus de balises existantes */
     document.getElementById("totalQuantity").textContent = cartCounter;
     document.getElementById("totalPrice").textContent = totalPrice;
@@ -144,6 +145,8 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
         totalPrice -= Number(productQuantity) * Number(product.price);
         let cartKey = productId + " " + productColor;
         cart.removeItem(cartKey);
+        document.getElementById("totalQuantity").textContent = cartCounter;
+        document.getElementById("totalPrice").textContent = totalPrice;
         e.target.closest("article").remove();
     });
 
