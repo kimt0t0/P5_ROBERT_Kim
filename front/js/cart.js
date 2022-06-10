@@ -153,25 +153,67 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
     /* Suivi vérification formulaire */
     let userForm = document.getElementById("cart__order__form");
     userForm.addEventListener("submit", function(e) {
-        e.preventDefault();
 
         let firstName = document.getElementById("firstName");
-        let regWords = /^[a-zA-Z-\s\']+$/;
-        if (firstName.value.trim() == "") { // (trim retire espaces au début et fin de l'input)
-            let errorFName = document.getElementById("firstNameErrorMsg");
-            errorFName.textContent = "Veuillez compléter ce champ.";
-            errorFName.style.color = "red";
-            e.preventDefault();
-        } else if (regWords.test(firstName.value) == false) {
-            let errorFName = document.getElementById("firstNameErrorMsg");
-            errorFName.textContent = "Le nom doit comporter des lettres, tirets et apostrophes uniquement.";
-            errorFName.style.color = "red";
-            e.preventDefault();
-        }
-        else {
-            console.log("commande ok");
+        let lastName = document.getElementById("lastName");
+        let address = document.getElementById("address");
+        let city = document.getElementById("city");
+        let email = document.getElementById("email");
+
+        let regNames = /^[a-zA-Z-\s\']+$/;
+        let regAddress = /^[0-9]{1, 4}[,\s]{0, 1}^[a-zA-Z-\s\']+$/;
+        let regEmail = /^[\w]+$[@]+^[\w]+$[.]+^[a-z]{2, 4}/;
+
+        let userInputs = new Array (firstName, lastName, address, city, email);
+
+        for (userInput of userInputs) {
+            console.log("entrée utilisateur visée: " + userInput);
+
+            let errorInput = document.getElementById(userInput.id + "ErrorMsg");
+            let test;
+
+            if (userInput.value.trim() == "") {     // (trim retire les espaces au début et fin de l'input)
+                errorInput.textContent = "Veuillez compléter ce champ.";
+                errorInput.style.color = "red";
+                e.preventDefault();
+            }
+
+            else {
+                switch (userInput) {
+                    case firstName || lastName || city:
+                        test = regNames.test(userInput);
+                        if (test == false) {
+                            e.preventDefault();
+                            errorInput.textContent = "Veuillez compléter ce champ avec des lettres, espaces, tirets et apostrophes.";
+                            break;
+                        } else {
+                            /*envoi formulaire */}
+                    case address:
+                        test = regAddress.test(userInput);
+                        if (test == false) {
+                            e.preventDefault();
+                            errorInput.textContent = "Veuillez compléter ce champ avec éventuellement un numéro suivi d'une virgule et d'un espace, puis des lettres, espaces, tirets et apostrophes.";
+                            break;
+                        } else {/*envoi formulaire */}
+                    case email:
+                        test = regEmail.test(userInput);
+                        if (test == false) {
+                            e.preventDefault();
+                            errorInput.textContent = "Veuillez compléter ce champ avec une adresse email à un format valide (ex: adresse@nomdedomaine.org).";
+                            break;
+                        } else {/*envoi formulaire */}
+                    default:
+                        e.preventDefault();
+                        errorInput.textContent = "Une erreur s'est produite. Veuillez réessayer plus tard.\nSi le problème persiste, n'hésitez pas à contacter notre support.";
+                    /* ajouter une partie qui envoie le formulaire si aucun champ n'est erroné ou se fait dans la partie default justement? */
+                }
+            }
         }
     });
+
+    async function testFormInput (reg, formInput) {
+        return reg.test(formInput);
+    }
 
 }
 

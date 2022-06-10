@@ -80,11 +80,26 @@ function setFormAttributes(inputName, regexModel, min, max, title) {
 
 
 function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) {
-  var cartItem, cartItemImg, productImg, cartItemContent, cartItemContentDescr, cartItemContentTitle, cartItemContentColor, cartItemContentPrice, cartItemSettings, settingsQuantity, settingsQuantityText, settingsQuantityInput, deleteContainer, deleteText, userForm;
-  return regeneratorRuntime.async(function hydrateDom$(_context3) {
+  var cartItem, cartItemImg, productImg, cartItemContent, cartItemContentDescr, cartItemContentTitle, cartItemContentColor, cartItemContentPrice, cartItemSettings, settingsQuantity, settingsQuantityText, settingsQuantityInput, deleteContainer, deleteText, userForm, testFormInput;
+  return regeneratorRuntime.async(function hydrateDom$(_context4) {
     while (1) {
-      switch (_context3.prev = _context3.next) {
+      switch (_context4.prev = _context4.next) {
         case 0:
+          testFormInput = function _ref(reg, formInput) {
+            return regeneratorRuntime.async(function testFormInput$(_context3) {
+              while (1) {
+                switch (_context3.prev = _context3.next) {
+                  case 0:
+                    return _context3.abrupt("return", reg.test(formInput));
+
+                  case 1:
+                  case "end":
+                    return _context3.stop();
+                }
+              }
+            });
+          };
+
           /* Création balises */
           cartItem = document.createElement("article");
           cartItemImg = document.createElement("div");
@@ -184,30 +199,75 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
 
           userForm = document.getElementById("cart__order__form");
           userForm.addEventListener("submit", function (e) {
-            e.preventDefault();
             var firstName = document.getElementById("firstName");
-            var regWords = /^[a-zA-Z-\s\']+$/;
+            var lastName = document.getElementById("lastName");
+            var address = document.getElementById("address");
+            var city = document.getElementById("city");
+            var email = document.getElementById("email");
+            var regNames = /^[a-zA-Z-\s\']+$/;
+            var regAddress = /^[0-9]{1, 4}[,\s]{0, 1}^[a-zA-Z-\s\']+$/;
+            var regEmail = /^[\w]+$[@]+^[\w]+$[.]+^[a-z]{2, 4}/;
+            var userInputs = new Array(firstName, lastName, address, city, email);
 
-            if (firstName.value.trim() == "") {
-              // (trim retire espaces au début et fin de l'input)
-              var errorFName = document.getElementById("firstNameErrorMsg");
-              errorFName.textContent = "Veuillez compléter ce champ.";
-              errorFName.style.color = "red";
-              e.preventDefault();
-            } else if (regWords.test(firstName.value) == false) {
-              var _errorFName = document.getElementById("firstNameErrorMsg");
+            for (var _i = 0, _userInputs = userInputs; _i < _userInputs.length; _i++) {
+              userInput = _userInputs[_i];
+              console.log("entrée utilisateur visée: " + userInput);
+              var errorInput = document.getElementById(userInput.id + "ErrorMsg");
+              var test = void 0;
 
-              _errorFName.textContent = "Le nom doit comporter des lettres, tirets et apostrophes uniquement.";
-              _errorFName.style.color = "red";
-              e.preventDefault();
-            } else {
-              console.log("commande ok");
+              if (userInput.value.trim() == "") {
+                // (trim retire les espaces au début et fin de l'input)
+                errorInput.textContent = "Veuillez compléter ce champ.";
+                errorInput.style.color = "red";
+                e.preventDefault();
+              } else {
+                switch (userInput) {
+                  case firstName || lastName || city:
+                    test = regNames.test(userInput);
+
+                    if (test == false) {
+                      e.preventDefault();
+                      errorInput.textContent = "Veuillez compléter ce champ avec des lettres, espaces, tirets et apostrophes.";
+                      break;
+                    } else {
+                      /*envoi formulaire */
+                    }
+
+                  case address:
+                    test = regAddress.test(userInput);
+
+                    if (test == false) {
+                      e.preventDefault();
+                      errorInput.textContent = "Veuillez compléter ce champ avec éventuellement un numéro suivi d'une virgule et d'un espace, puis des lettres, espaces, tirets et apostrophes.";
+                      break;
+                    } else {
+                      /*envoi formulaire */
+                    }
+
+                  case email:
+                    test = regEmail.test(userInput);
+
+                    if (test == false) {
+                      e.preventDefault();
+                      errorInput.textContent = "Veuillez compléter ce champ avec une adresse email à un format valide (ex: adresse@nomdedomaine.org).";
+                      break;
+                    } else {
+                      /*envoi formulaire */
+                    }
+
+                  default:
+                    e.preventDefault();
+                    errorInput.textContent = "Une erreur s'est produite. Veuillez réessayer plus tard.\nSi le problème persiste, n'hésitez pas à contacter notre support.";
+
+                  /* ajouter une partie qui envoie le formulaire si aucun champ n'est erroné ou se fait dans la partie default justement? */
+                }
+              }
             }
           });
 
-        case 57:
+        case 58:
         case "end":
-          return _context3.stop();
+          return _context4.stop();
       }
     }
   });
@@ -217,15 +277,15 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
 
 (function _callee() {
   var i, cartKey, splitKey, product, pageContent;
-  return regeneratorRuntime.async(function _callee$(_context4) {
+  return regeneratorRuntime.async(function _callee$(_context5) {
     while (1) {
-      switch (_context4.prev = _context4.next) {
+      switch (_context5.prev = _context5.next) {
         case 0:
           i = 0;
 
         case 1:
           if (!(i < cart.length)) {
-            _context4.next = 18;
+            _context5.next = 18;
             break;
           }
 
@@ -242,28 +302,28 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
           cartCounter += Number(productQuantity);
           /* Infos serveur: */
 
-          _context4.next = 10;
+          _context5.next = 10;
           return regeneratorRuntime.awrap(getProduct(productId));
 
         case 10:
-          product = _context4.sent;
+          product = _context5.sent;
           totalPrice += Number(productQuantity) * Number(product.price);
           /* Génération contenu page au loading: */
 
-          _context4.next = 14;
+          _context5.next = 14;
           return regeneratorRuntime.awrap(hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey));
 
         case 14:
-          pageContent = _context4.sent;
+          pageContent = _context5.sent;
 
         case 15:
           i++;
-          _context4.next = 1;
+          _context5.next = 1;
           break;
 
         case 18:
         case "end":
-          return _context4.stop();
+          return _context5.stop();
       }
     }
   });
