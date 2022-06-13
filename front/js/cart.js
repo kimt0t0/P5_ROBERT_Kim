@@ -131,12 +131,11 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
         /* (màj compteur panier et prix total: ) */
         cartCounter += Number(productQuantity);
         totalPrice += Number(productQuantity) * Number(product.price);
+
         document.getElementById("totalQuantity").textContent = cartCounter;
         document.getElementById("totalPrice").textContent = totalPrice;
         /* (màj local storage: ) */
-        console.log("ancienne quantité: " + cart[cartKey]);
         cart[cartKey] = productQuantity;
-        console.log("nouvelle quantité: " + cart[cartKey]);
     });
     
     /* Suppression d'un produit du panier: */
@@ -154,66 +153,49 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
     let userForm = document.getElementById("cart__order__form");
     userForm.addEventListener("submit", function(e) {
 
+        e.preventDefault();
+
         let firstName = document.getElementById("firstName");
         let lastName = document.getElementById("lastName");
         let address = document.getElementById("address");
         let city = document.getElementById("city");
         let email = document.getElementById("email");
 
-        let regNames = /^[a-zA-Z-\s\']+$/;
-        let regAddress = /^[0-9]{1, 4}[,\s]{0, 1}^[a-zA-Z-\s\']+$/;
-        let regEmail = /^[\w]+$[@]+^[\w]+$[.]+^[a-z]{2, 4}/;
+        const regNames = /^[a-zA-Z\s'-]+$/;
+        const regAddress = /^[a-zA-Z0-9\s,'-]*$/;
+        const regEmail = /^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+([A-Za-z0-9]{2,4})$/;
 
-        let userInputs = new Array (firstName, lastName, address, city, email);
+        /* let testFirstName = regNames.test(firstName.value);
+        let testLastName = regNames.test(lastName.value);
+        let testAddress = regAddress.test(address.value);
+        let testCity = regNames.test(city.value);
+        let testEmail = regEmail.test(email.value); */
 
-        for (userInput of userInputs) {
-            console.log("entrée utilisateur visée: " + userInput);
+        let userInputs = [firstName, lastName, address, city, email];
+        let regsToTest = [regNames, regNames, regAddress, regNames, regEmail];
+            
+        for (let i = 0; userInputs.length; i++) {
+            console.log("teste "+ userInputs[i].name + " avec " + regsToTest[i]);
+            let test = regsToTest[i].test(userInputs[i].value);
+            let error = false;
 
-            let errorInput = document.getElementById(userInput.id + "ErrorMsg");
-            let test;
-
-            if (userInput.value.trim() == "") {     // (trim retire les espaces au début et fin de l'input)
-                errorInput.textContent = "Veuillez compléter ce champ.";
-                errorInput.style.color = "red";
-                e.preventDefault();
-            }
-
-            else {
-                switch (userInput) {
-                    case firstName || lastName || city:
-                        test = regNames.test(userInput);
-                        if (test == false) {
-                            e.preventDefault();
-                            errorInput.textContent = "Veuillez compléter ce champ avec des lettres, espaces, tirets et apostrophes.";
-                            break;
-                        } else {
-                            /*envoi formulaire */}
-                    case address:
-                        test = regAddress.test(userInput);
-                        if (test == false) {
-                            e.preventDefault();
-                            errorInput.textContent = "Veuillez compléter ce champ avec éventuellement un numéro suivi d'une virgule et d'un espace, puis des lettres, espaces, tirets et apostrophes.";
-                            break;
-                        } else {/*envoi formulaire */}
-                    case email:
-                        test = regEmail.test(userInput);
-                        if (test == false) {
-                            e.preventDefault();
-                            errorInput.textContent = "Veuillez compléter ce champ avec une adresse email à un format valide (ex: adresse@nomdedomaine.org).";
-                            break;
-                        } else {/*envoi formulaire */}
-                    default:
-                        e.preventDefault();
-                        errorInput.textContent = "Une erreur s'est produite. Veuillez réessayer plus tard.\nSi le problème persiste, n'hésitez pas à contacter notre support.";
-                    /* ajouter une partie qui envoie le formulaire si aucun champ n'est erroné ou se fait dans la partie default justement? */
-                }
+            if (test == false) {
+                errMessage = document.getElementById(userInputs[i].name + "ErrorMsg");
+                errMessage.textContent = "Ce champ est vide ou n'a pas été complété correctement.";
+                error = true;
             }
         }
-    });
-
-    async function testFormInput (reg, formInput) {
-        return reg.test(formInput);
-    }
+        
+        if (error) {
+            e.preventDefault();
+            alert("Votre commande n'a pas pu être finalisée.\nVeuillez vérifier que vous avez complété correctement le formulaire.\n\nEn cas de problème, n'hésitez pas à contacter notre support");
+        }
+        else {
+            e.preventDefault();
+            console.log("Envoi du formulaire...")
+        }
+        
+});
 
 }
 
