@@ -38,6 +38,7 @@ async function setFormAttributes(inputName, regexModel, min, max, title) {
 
 /* *** DOM DYNAMIQUE ***  */
 async function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) {
+    /* ÉLÉMENTS A GÉNÉRER ET PLACER POUR AFFICHAGE */
     /* Création balises */
     let cartItem = document.createElement("article");
     let cartItemImg = document.createElement("div");
@@ -70,7 +71,6 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
     cartItemContentDescr.appendChild(cartItemContentTitle);
     cartItemContentDescr.appendChild(cartItemContentColor);
     cartItemContentDescr.appendChild(cartItemContentPrice);
-
 
     cartItemContent.appendChild(cartItemSettings);
 
@@ -149,44 +149,45 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
         e.target.closest("article").remove();
     });
 
-    /* Suivi vérification formulaire */
+    /* REMPLISSAGE ET VÉRFICATIONS FORMULAIRE */
+    /* Accès au formulaire */
     let userForm = document.getElementById("cart__order__form");
     userForm.addEventListener("submit", function(e) {
-
+        // Ne pas envoyer directement pour check avant:
         e.preventDefault();
 
+        // Éléments d'input à check:
         let firstName = document.getElementById("firstName");
         let lastName = document.getElementById("lastName");
         let address = document.getElementById("address");
         let city = document.getElementById("city");
         let email = document.getElementById("email");
 
+        // Regexs pour check:
         const regNames = /^[a-zA-Z\s'-]+$/;
         const regAddress = /^[a-zA-Z0-9\s,'-]*$/;
         const regEmail = /^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+([A-Za-z0-9]{2,4})$/;
 
-        /* let testFirstName = regNames.test(firstName.value);
-        let testLastName = regNames.test(lastName.value);
-        let testAddress = regAddress.test(address.value);
-        let testCity = regNames.test(city.value);
-        let testEmail = regEmail.test(email.value); */
+        let inputsToTest = [firstName, lastName, address, city, email];
+        let regexToTest = [regNames, regNames, regAddress, regNames, regEmail];
 
-        let userInputs = [firstName, lastName, address, city, email];
-        let regsToTest = [regNames, regNames, regAddress, regNames, regEmail];
-            
-        for (let i = 0; userInputs.length; i++) {
-            console.log("teste "+ userInputs[i].name + " avec " + regsToTest[i]);
-            let test = regsToTest[i].test(userInputs[i].value);
-            let error = false;
-
+        //Indicateur mauvais remplissage:        
+        let error = false;
+        
+        // Pour chaque élément de la liste d'input...:
+        for (let i = 0; inputsToTest.length - 1; i++) {
+            // Test:
+            test = regexToTest[i].test(inputsToTest[i].value);
+            console.log("Test de l'input " + inputsToTest[i].name + " avec la regex: " + regexToTest[i] + " -----> " + test);
+            // Si test faux ne pas envoyer et message d'erreur:
             if (test == false) {
-                errMessage = document.getElementById(userInputs[i].name + "ErrorMsg");
+                errMessage = document.getElementById(inputsToTest[i].name + "ErrorMsg");
                 errMessage.textContent = "Ce champ est vide ou n'a pas été complété correctement.";
                 error = true;
             }
         }
         
-        if (error) {
+        if (error == true) {
             e.preventDefault();
             alert("Votre commande n'a pas pu être finalisée.\nVeuillez vérifier que vous avez complété correctement le formulaire.\n\nEn cas de problème, n'hésitez pas à contacter notre support");
         }
@@ -194,7 +195,7 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
             e.preventDefault();
             console.log("Envoi du formulaire...")
         }
-        
+    
 });
 
 }
