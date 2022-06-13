@@ -1,15 +1,103 @@
 "use strict";
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
 /* *** VARIABLES *** */
 var cart = localStorage;
 var cartCounter = 0;
 var totalPrice = 0;
 var productId, productColor, productQuantity, productImgUrl;
+/* *** CLASSES *** */
+
+var Contact =
+/*#__PURE__*/
+function () {
+  function Contact(firstName, lastName, address, city, email) {
+    _classCallCheck(this, Contact);
+
+    this.firstName = firstName.value;
+    this.lastName = lastName.value;
+    this.address = address.value;
+    this.city = city.value;
+    this.email = email.value;
+  }
+
+  _createClass(Contact, [{
+    key: "getFirstName",
+    value: function getFirstName() {
+      return this.firstName;
+    }
+  }, {
+    key: "getLastName",
+    value: function getLastName() {
+      return this.lastName;
+    }
+  }, {
+    key: "getAddress",
+    value: function getAddress() {
+      return this.address;
+    }
+  }, {
+    key: "getCity",
+    value: function getCity() {
+      return this.city;
+    }
+  }, {
+    key: "getEmail",
+    value: function getEmail() {
+      return this.email;
+    }
+  }, {
+    key: "createOrderTab",
+    value: function createOrderTab() {
+      var cartCounter = 0;
+      var totalPrice = 0;
+      var orderTab = [];
+
+      for (var i = 0; i < cart.length; i++) {
+        var cartKey = localStorage.key(i);
+        var splitKey = cartKey.split(" ");
+        productId = splitKey[0];
+        productColor = splitKey[1];
+        productQuantity = cart.getItem(cartKey);
+        var cartProduct = [productId, productColor, productQuantity];
+        orderTab += cartProduct;
+        console.log(orderTab);
+        return orderTab;
+      }
+    }
+  }, {
+    key: "getOrderPrice",
+    value: function getOrderPrice(orderTab) {
+      var totalOrderPrice = 0;
+
+      for (var i = 0; i < orderTab.length; i++) {
+        var _productId = orderTab[i][1];
+        var _productQuantity = orderTab[i][3];
+        var productPrice = fetch("http://localhost:3000/api/products/" + _productId).then(function (httpBodyResponse) {
+          return httpBodyResponse.json();
+        }).then(function (product) {
+          return product.price;
+        });
+        totalOrderPrice += Number(_productQuantity) * Number(productPrice);
+      }
+
+      console.log(totalOrderPrice);
+    }
+  }]);
+
+  return Contact;
+}();
 /* *** FONCTIONS *** */
 
 /* GÉNÉRAL */
 
 /* Accès aux infos produit sur serveur */
+
 
 function getProduct(id) {
   return regeneratorRuntime.async(function getProduct$(_context) {
@@ -186,9 +274,7 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
 
           userForm = document.getElementById("cart__order__form");
           userForm.addEventListener("submit", function (e) {
-            // Ne pas envoyer directement pour check avant:
-            e.preventDefault(); // Éléments d'input à check:
-
+            // Éléments d'input à check:
             var firstName = document.getElementById("firstName");
             var lastName = document.getElementById("lastName");
             var address = document.getElementById("address");
@@ -196,17 +282,17 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
             var email = document.getElementById("email"); // Regexs pour check:
 
             var regNames = /^[a-zA-Z\s'-]+$/;
-            var regAddress = /^[a-zA-Z0-9\s,'-]*$/;
+            var regAddress = /^[a-zA-Z0-9\s,'-]*$/; //problème: valide les entrées contenant uniquement des chiffres...
+
             var regEmail = /^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+([A-Za-z0-9]{2,4})$/;
             var inputsToTest = [firstName, lastName, address, city, email];
             var regexToTest = [regNames, regNames, regAddress, regNames, regEmail]; //Indicateur mauvais remplissage:        
 
             var error = false; // Pour chaque élément de la liste d'input...:
 
-            for (var i = 0; inputsToTest.length - 1; i++) {
+            for (var i = 0; i < inputsToTest.length; i++) {
               // Test:
-              test = regexToTest[i].test(inputsToTest[i].value);
-              console.log("Test de l'input " + inputsToTest[i].name + " avec la regex: " + regexToTest[i] + " -----> " + test); // Si test faux ne pas envoyer et message d'erreur:
+              test = regexToTest[i].test(inputsToTest[i].value); // Si test faux ne pas envoyer et message d'erreur:
 
               if (test == false) {
                 errMessage = document.getElementById(inputsToTest[i].name + "ErrorMsg");
@@ -221,6 +307,10 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
             } else {
               e.preventDefault();
               console.log("Envoi du formulaire...");
+              var newContact = new Contact(firstName, lastName, address, city, email, cart);
+              var orderTab = newContact.createOrderTab();
+              var orderPrice = newContact.getOrderPrice(orderTab);
+              console.log(newContact + "\n----> commande: " + contactOrder + "\nPrix total: " + orderPrice);
             }
           });
 

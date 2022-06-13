@@ -6,6 +6,72 @@ var totalPrice = 0;
 
 var productId, productColor, productQuantity, productImgUrl;
 
+/* *** CLASSES *** */
+
+class Contact {
+    constructor (firstName, lastName, address, city, email) {
+        this.firstName = firstName.value;
+        this.lastName = lastName.value;
+        this.address = address.value;
+        this.city = city.value;
+        this.email = email.value;
+    }
+
+    getFirstName() {
+        return this.firstName;
+    }
+
+    getLastName() {
+        return this.lastName;
+    }
+
+    getAddress() {
+        return this.address;
+    }
+
+    getCity() {
+        return this.city;
+    }
+
+    getEmail() {
+        return this.email;
+    }
+
+    createOrderTab() {
+        let cartCounter = 0;
+        let totalPrice = 0;
+        var orderTab = [];
+        for(let i = 0; i < cart.length; i++) {
+            let cartKey = localStorage.key(i);
+            let splitKey = cartKey.split(" ");
+            productId = splitKey[0];
+            productColor = splitKey[1];
+            productQuantity = cart.getItem(cartKey);
+            var cartProduct = [productId, productColor, productQuantity];
+            orderTab += cartProduct;
+            console.log(orderTab);
+            return orderTab;
+        }
+    }
+
+    getOrderPrice (orderTab) {
+        var totalOrderPrice = 0;
+        for (let i = 0; i < orderTab.length; i++) {
+            let productId = orderTab[i][1];
+            let productQuantity = orderTab[i][3];
+            let productPrice = fetch("http://localhost:3000/api/products/" + productId)
+                .then(function(httpBodyResponse) {
+                    return httpBodyResponse.json();
+                })
+                .then(function(product) {
+                    return product.price;
+                });
+            totalOrderPrice += Number(productQuantity) * Number(productPrice);
+        }
+    
+        console.log(totalOrderPrice);
+    }
+}
 
 /* *** FONCTIONS *** */
 
@@ -153,8 +219,6 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
     /* Accès au formulaire */
     let userForm = document.getElementById("cart__order__form");
     userForm.addEventListener("submit", function(e) {
-        // Ne pas envoyer directement pour check avant:
-        e.preventDefault();
 
         // Éléments d'input à check:
         let firstName = document.getElementById("firstName");
@@ -165,20 +229,19 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
 
         // Regexs pour check:
         const regNames = /^[a-zA-Z\s'-]+$/;
-        const regAddress = /^[a-zA-Z0-9\s,'-]*$/;
+        const regAddress = /^[a-zA-Z0-9\s,'-]*$/; //problème: valide les entrées contenant uniquement des chiffres...
         const regEmail = /^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+([A-Za-z0-9]{2,4})$/;
 
-        let inputsToTest = [firstName, lastName, address, city, email];
+         let inputsToTest = [firstName, lastName, address, city, email];
         let regexToTest = [regNames, regNames, regAddress, regNames, regEmail];
 
         //Indicateur mauvais remplissage:        
         let error = false;
         
         // Pour chaque élément de la liste d'input...:
-        for (let i = 0; inputsToTest.length - 1; i++) {
+        for (let i = 0; i < inputsToTest.length; i++) {
             // Test:
             test = regexToTest[i].test(inputsToTest[i].value);
-            console.log("Test de l'input " + inputsToTest[i].name + " avec la regex: " + regexToTest[i] + " -----> " + test);
             // Si test faux ne pas envoyer et message d'erreur:
             if (test == false) {
                 errMessage = document.getElementById(inputsToTest[i].name + "ErrorMsg");
@@ -194,6 +257,10 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
         else {
             e.preventDefault();
             console.log("Envoi du formulaire...")
+            var newContact = new Contact(firstName, lastName, address, city, email, cart);
+            var orderTab = newContact.createOrderTab();
+            var orderPrice = newContact.getOrderPrice (orderTab);
+            console.log(newContact + "\n----> commande: " + contactOrder + "\nPrix total: " + orderPrice);
         }
     
 });
