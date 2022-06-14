@@ -150,13 +150,12 @@ function setFormAttributes(inputName, regexModel, min, max, title) {
 
 
 function checkForm(e) {
-  var firstName, lastName, address, city, email, regNames, regAddress, regEmail, inputsToTest, regexToTest, error, i;
+  var firstName, lastName, address, city, email, regNames, regAddress, regEmail, inputsToTest, regexToTest, error, i, totalPriceOrder, finalOrder;
   return regeneratorRuntime.async(function checkForm$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
         case 0:
-          console.log("test appel fonction"); // Éléments d'input à check:
-
+          // Éléments d'input à check:
           firstName = document.getElementById("firstName");
           lastName = document.getElementById("lastName");
           address = document.getElementById("address");
@@ -173,8 +172,7 @@ function checkForm(e) {
           error = false; // Pour chaque élément de la liste d'input...:
 
           for (i = 0; i < inputsToTest.length; i++) {
-            console.log("test appel boucle " + i); // Test:
-
+            // Test:
             test = regexToTest[i].test(inputsToTest[i].value); // Si test faux ne pas envoyer et message d'erreur:
 
             if (test == false) {
@@ -185,20 +183,32 @@ function checkForm(e) {
           }
 
           if (!(error == true)) {
-            _context3.next = 18;
+            _context3.next = 17;
             break;
           }
 
           e.preventDefault();
           return _context3.abrupt("return", alert("Votre commande n'a pas pu être finalisée.\nVeuillez vérifier que vous avez complété correctement le formulaire.\n\nEn cas de problème, n'hésitez pas à contacter notre support"));
 
-        case 18:
+        case 17:
           e.preventDefault();
           console.log("Envoi du formulaire...");
           Contact = new Contact(firstName, lastName, address, city, email);
           orderGrid = Contact.createorderGrid(cart);
+          console.log(orderGrid);
+          _context3.next = 24;
+          return regeneratorRuntime.awrap(getFinalTotal(orderGrid));
 
-        case 22:
+        case 24:
+          totalPriceOrder = _context3.sent;
+          console.log(totalPriceOrder);
+          finalOrder = {
+            "products": orderGrid,
+            "total": totalPriceOrder
+          };
+          console.log(finalOrder); // postOrder(finalOrder);
+
+        case 28:
         case "end":
           return _context3.stop();
       }
@@ -247,14 +257,43 @@ function getFinalTotal(orderGrid) {
     }
   });
 }
+/* Envoi commande */
+
+
+function postOrder(data) {
+  return regeneratorRuntime.async(function postOrder$(_context5) {
+    while (1) {
+      switch (_context5.prev = _context5.next) {
+        case 0:
+          fetch("http://localhost:3000/api/products/order", {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {
+              "Content-type": "application/json;charset=UTF-8"
+            }
+          }).then(function (response) {
+            return response.json();
+          }).then(function (json) {
+            console.log(json);
+          })["catch"](function (err) {
+            return console.log(err);
+          });
+
+        case 1:
+        case "end":
+          return _context5.stop();
+      }
+    }
+  });
+}
 /* *** DOM DYNAMIQUE ***  */
 
 
 function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) {
   var cartItem, cartItemImg, productImg, cartItemContent, cartItemContentDescr, cartItemContentTitle, cartItemContentColor, cartItemContentPrice, cartItemSettings, settingsQuantity, settingsQuantityText, settingsQuantityInput, deleteContainer, deleteText;
-  return regeneratorRuntime.async(function hydrateDom$(_context5) {
+  return regeneratorRuntime.async(function hydrateDom$(_context6) {
     while (1) {
-      switch (_context5.prev = _context5.next) {
+      switch (_context6.prev = _context6.next) {
         case 0:
           /* ÉLÉMENTS A GÉNÉRER ET PLACER POUR AFFICHAGE */
 
@@ -354,7 +393,7 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
 
         case 55:
         case "end":
-          return _context5.stop();
+          return _context6.stop();
       }
     }
   });
@@ -364,15 +403,15 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
 
 (function _callee() {
   var i, cartKey, splitKey, product, pageContent, userForm;
-  return regeneratorRuntime.async(function _callee$(_context6) {
+  return regeneratorRuntime.async(function _callee$(_context7) {
     while (1) {
-      switch (_context6.prev = _context6.next) {
+      switch (_context7.prev = _context7.next) {
         case 0:
           i = 0;
 
         case 1:
           if (!(i < cart.length)) {
-            _context6.next = 18;
+            _context7.next = 18;
             break;
           }
 
@@ -389,23 +428,23 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
           cartCounter += Number(productQuantity);
           /* Infos serveur: */
 
-          _context6.next = 10;
+          _context7.next = 10;
           return regeneratorRuntime.awrap(getProduct(productId));
 
         case 10:
-          product = _context6.sent;
+          product = _context7.sent;
           totalPrice += Number(productQuantity) * Number(product.price);
           /* Génération contenu page au loading: */
 
-          _context6.next = 14;
+          _context7.next = 14;
           return regeneratorRuntime.awrap(hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey));
 
         case 14:
-          pageContent = _context6.sent;
+          pageContent = _context7.sent;
 
         case 15:
           i++;
-          _context6.next = 1;
+          _context7.next = 1;
           break;
 
         case 18:
@@ -419,7 +458,7 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
 
         case 20:
         case "end":
-          return _context6.stop();
+          return _context7.stop();
       }
     }
   });

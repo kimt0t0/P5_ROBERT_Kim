@@ -85,9 +85,9 @@ async function setFormAttributes(inputName, regexModel, min, max, title) {
 }
 
 /* FORMULAIRE */
+
 /* Vérification et création objet contact + tableau produits */
 async function checkForm(e) {
-    console.log("test appel fonction");
 
     // Éléments d'input à check:
     let firstName = document.getElementById("firstName");
@@ -109,7 +109,6 @@ async function checkForm(e) {
     
     // Pour chaque élément de la liste d'input...:
     for (let i = 0; i < inputsToTest.length; i++) {
-        console.log("test appel boucle " + i);
         // Test:
         test = regexToTest[i].test(inputsToTest[i].value);
         // Si test faux ne pas envoyer et message d'erreur:
@@ -127,9 +126,17 @@ async function checkForm(e) {
     else {
         e.preventDefault();
         console.log("Envoi du formulaire...")
-
         Contact = new Contact(firstName, lastName, address, city, email);
-        orderGrid = Contact.createorderGrid(cart);
+        orderGrid = Contact.createorderGrid(cart); 
+        console.log(orderGrid);
+        let totalPriceOrder = await getFinalTotal(orderGrid);
+        console.log(totalPriceOrder);
+        let finalOrder = {
+            "products": orderGrid, 
+            "total": totalPriceOrder
+        };
+        console.log(finalOrder);
+        // postOrder(finalOrder);
     }
 
 }
@@ -145,6 +152,21 @@ async function getFinalTotal (orderGrid) {
     return totalPriceOrder;
 }
 
+/* Envoi commande */
+async function postOrder(data) {
+    fetch("http://localhost:3000/api/products/order", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {"Content-type": "application/json;charset=UTF-8"}
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(json) {
+        console.log(json);
+    })
+    .catch(err => console.log(err));
+}
 
 
 /* *** DOM DYNAMIQUE ***  */
