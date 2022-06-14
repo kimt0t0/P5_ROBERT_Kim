@@ -52,11 +52,9 @@ function () {
       return this.email;
     }
   }, {
-    key: "createOrderTab",
-    value: function createOrderTab() {
-      var cartCounter = 0;
-      var totalPrice = 0;
-      var orderTab = [];
+    key: "createorderGrid",
+    value: function createorderGrid(cart) {
+      var orderGrid = [];
 
       for (var i = 0; i < cart.length; i++) {
         var cartKey = localStorage.key(i);
@@ -65,28 +63,10 @@ function () {
         productColor = splitKey[1];
         productQuantity = cart.getItem(cartKey);
         var cartProduct = [productId, productColor, productQuantity];
-        orderTab += cartProduct;
-        console.log(orderTab);
-        return orderTab;
-      }
-    }
-  }, {
-    key: "getOrderPrice",
-    value: function getOrderPrice(orderTab) {
-      var totalOrderPrice = 0;
-
-      for (var i = 0; i < orderTab.length; i++) {
-        var _productId = orderTab[i][1];
-        var _productQuantity = orderTab[i][3];
-        var productPrice = fetch("http://localhost:3000/api/products/" + _productId).then(function (httpBodyResponse) {
-          return httpBodyResponse.json();
-        }).then(function (product) {
-          return product.price;
-        });
-        totalOrderPrice += Number(_productQuantity) * Number(productPrice);
+        orderGrid[i] = cartProduct;
       }
 
-      console.log(totalOrderPrice);
+      return orderGrid;
     }
   }]);
 
@@ -164,14 +144,117 @@ function setFormAttributes(inputName, regexModel, min, max, title) {
     }
   });
 }
+/* FORMULAIRE */
+
+/* Vérification et création objet contact + tableau produits */
+
+
+function checkForm(e) {
+  var firstName, lastName, address, city, email, regNames, regAddress, regEmail, inputsToTest, regexToTest, error, i;
+  return regeneratorRuntime.async(function checkForm$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          console.log("test appel fonction"); // Éléments d'input à check:
+
+          firstName = document.getElementById("firstName");
+          lastName = document.getElementById("lastName");
+          address = document.getElementById("address");
+          city = document.getElementById("city");
+          email = document.getElementById("email"); // Regexs pour check:
+
+          regNames = /^[a-zA-Z\s'-]+$/;
+          regAddress = /^[a-zA-Z0-9\s,'-]*$/; //problème: valide les entrées contenant uniquement des chiffres...
+
+          regEmail = /^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+([A-Za-z0-9]{2,4})$/;
+          inputsToTest = [firstName, lastName, address, city, email];
+          regexToTest = [regNames, regNames, regAddress, regNames, regEmail]; //Indicateur mauvais remplissage:        
+
+          error = false; // Pour chaque élément de la liste d'input...:
+
+          for (i = 0; i < inputsToTest.length; i++) {
+            console.log("test appel boucle " + i); // Test:
+
+            test = regexToTest[i].test(inputsToTest[i].value); // Si test faux ne pas envoyer et message d'erreur:
+
+            if (test == false) {
+              errMessage = document.getElementById(inputsToTest[i].name + "ErrorMsg");
+              errMessage.textContent = "Ce champ est vide ou n'a pas été complété correctement.";
+              error = true;
+            }
+          }
+
+          if (!(error == true)) {
+            _context3.next = 18;
+            break;
+          }
+
+          e.preventDefault();
+          return _context3.abrupt("return", alert("Votre commande n'a pas pu être finalisée.\nVeuillez vérifier que vous avez complété correctement le formulaire.\n\nEn cas de problème, n'hésitez pas à contacter notre support"));
+
+        case 18:
+          e.preventDefault();
+          console.log("Envoi du formulaire...");
+          Contact = new Contact(firstName, lastName, address, city, email);
+          orderGrid = Contact.createorderGrid(cart);
+
+        case 22:
+        case "end":
+          return _context3.stop();
+      }
+    }
+  });
+}
+/* Calcul du total final pour envoi */
+
+
+function getFinalTotal(orderGrid) {
+  var totalPriceOrder, i, _product;
+
+  return regeneratorRuntime.async(function getFinalTotal$(_context4) {
+    while (1) {
+      switch (_context4.prev = _context4.next) {
+        case 0:
+          totalPriceOrder = 0;
+          i = 0;
+
+        case 2:
+          if (!(i < orderGrid.length)) {
+            _context4.next = 11;
+            break;
+          }
+
+          productId = orderGrid[i][0];
+          _context4.next = 6;
+          return regeneratorRuntime.awrap(getProduct(productId));
+
+        case 6:
+          _product = _context4.sent;
+          totalPriceOrder += Number(orderGrid[i][2]) * Number(_product.price);
+
+        case 8:
+          i++;
+          _context4.next = 2;
+          break;
+
+        case 11:
+          return _context4.abrupt("return", totalPriceOrder);
+
+        case 12:
+        case "end":
+          return _context4.stop();
+      }
+    }
+  });
+}
 /* *** DOM DYNAMIQUE ***  */
 
 
 function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) {
-  var cartItem, cartItemImg, productImg, cartItemContent, cartItemContentDescr, cartItemContentTitle, cartItemContentColor, cartItemContentPrice, cartItemSettings, settingsQuantity, settingsQuantityText, settingsQuantityInput, deleteContainer, deleteText, userForm;
-  return regeneratorRuntime.async(function hydrateDom$(_context3) {
+  var cartItem, cartItemImg, productImg, cartItemContent, cartItemContentDescr, cartItemContentTitle, cartItemContentColor, cartItemContentPrice, cartItemSettings, settingsQuantity, settingsQuantityText, settingsQuantityInput, deleteContainer, deleteText;
+  return regeneratorRuntime.async(function hydrateDom$(_context5) {
     while (1) {
-      switch (_context3.prev = _context3.next) {
+      switch (_context5.prev = _context5.next) {
         case 0:
           /* ÉLÉMENTS A GÉNÉRER ET PLACER POUR AFFICHAGE */
 
@@ -268,55 +351,10 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
             document.getElementById("totalPrice").textContent = totalPrice;
             e.target.closest("article").remove();
           });
-          /* REMPLISSAGE ET VÉRFICATIONS FORMULAIRE */
 
-          /* Accès au formulaire */
-
-          userForm = document.getElementById("cart__order__form");
-          userForm.addEventListener("submit", function (e) {
-            // Éléments d'input à check:
-            var firstName = document.getElementById("firstName");
-            var lastName = document.getElementById("lastName");
-            var address = document.getElementById("address");
-            var city = document.getElementById("city");
-            var email = document.getElementById("email"); // Regexs pour check:
-
-            var regNames = /^[a-zA-Z\s'-]+$/;
-            var regAddress = /^[a-zA-Z0-9\s,'-]*$/; //problème: valide les entrées contenant uniquement des chiffres...
-
-            var regEmail = /^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+([A-Za-z0-9]{2,4})$/;
-            var inputsToTest = [firstName, lastName, address, city, email];
-            var regexToTest = [regNames, regNames, regAddress, regNames, regEmail]; //Indicateur mauvais remplissage:        
-
-            var error = false; // Pour chaque élément de la liste d'input...:
-
-            for (var i = 0; i < inputsToTest.length; i++) {
-              // Test:
-              test = regexToTest[i].test(inputsToTest[i].value); // Si test faux ne pas envoyer et message d'erreur:
-
-              if (test == false) {
-                errMessage = document.getElementById(inputsToTest[i].name + "ErrorMsg");
-                errMessage.textContent = "Ce champ est vide ou n'a pas été complété correctement.";
-                error = true;
-              }
-            }
-
-            if (error == true) {
-              e.preventDefault();
-              alert("Votre commande n'a pas pu être finalisée.\nVeuillez vérifier que vous avez complété correctement le formulaire.\n\nEn cas de problème, n'hésitez pas à contacter notre support");
-            } else {
-              e.preventDefault();
-              console.log("Envoi du formulaire...");
-              var newContact = new Contact(firstName, lastName, address, city, email, cart);
-              var orderTab = newContact.createOrderTab();
-              var orderPrice = newContact.getOrderPrice(orderTab);
-              console.log(newContact + "\n----> commande: " + contactOrder + "\nPrix total: " + orderPrice);
-            }
-          });
-
-        case 57:
+        case 55:
         case "end":
-          return _context3.stop();
+          return _context5.stop();
       }
     }
   });
@@ -325,16 +363,16 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
 
 
 (function _callee() {
-  var i, cartKey, splitKey, product, pageContent;
-  return regeneratorRuntime.async(function _callee$(_context4) {
+  var i, cartKey, splitKey, product, pageContent, userForm;
+  return regeneratorRuntime.async(function _callee$(_context6) {
     while (1) {
-      switch (_context4.prev = _context4.next) {
+      switch (_context6.prev = _context6.next) {
         case 0:
           i = 0;
 
         case 1:
           if (!(i < cart.length)) {
-            _context4.next = 18;
+            _context6.next = 18;
             break;
           }
 
@@ -343,7 +381,7 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
           splitKey = cartKey.split(" ");
           productId = splitKey[0];
           productColor = splitKey[1];
-          /* Quantité (inpupt): */
+          /* Quantité (input): */
 
           productQuantity = cart.getItem(cartKey);
           /* Màj compteur d'items */
@@ -351,28 +389,37 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
           cartCounter += Number(productQuantity);
           /* Infos serveur: */
 
-          _context4.next = 10;
+          _context6.next = 10;
           return regeneratorRuntime.awrap(getProduct(productId));
 
         case 10:
-          product = _context4.sent;
+          product = _context6.sent;
           totalPrice += Number(productQuantity) * Number(product.price);
           /* Génération contenu page au loading: */
 
-          _context4.next = 14;
+          _context6.next = 14;
           return regeneratorRuntime.awrap(hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey));
 
         case 14:
-          pageContent = _context4.sent;
+          pageContent = _context6.sent;
 
         case 15:
           i++;
-          _context4.next = 1;
+          _context6.next = 1;
           break;
 
         case 18:
+          /* REMPLISSAGE ET VÉRFICATIONS FORMULAIRE */
+
+          /* Accès au formulaire */
+          userForm = document.getElementById("cart__order__form");
+          userForm.addEventListener("submit", function (e) {
+            checkForm(e);
+          });
+
+        case 20:
         case "end":
-          return _context4.stop();
+          return _context6.stop();
       }
     }
   });
