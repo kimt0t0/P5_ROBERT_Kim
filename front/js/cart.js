@@ -73,19 +73,19 @@ async function setFormAttributes(inputName, regexModel, min, max, title) {
 /* FORMULAIRE */
 
 /* Création tableau commande */
-async function createorderGrid(cart) {
-    let orderGrid = [];
+async function createProducts(cart) {
+    let products = [];
     for(let i = 0; i < cart.length; i++) {
         let cartKey = localStorage.key(i);
         let splitKey = cartKey.split(" ");
         productId = splitKey[0];
-        if (orderGrid.includes(productId)) {
+        if (products.includes(productId)) {
         }
         else {
-            orderGrid[i] = productId;
+            products[i] = productId;
         }
     }
-    return orderGrid;
+    return products;
 }
 
 /* Vérification et création objet contact + tableau produits */
@@ -128,10 +128,13 @@ async function checkForm(e) {
     else {
         e.preventDefault();
         console.log("Envoi du formulaire...")
-        Contact = new Contact(firstName, lastName, address, city, email);
-        const orderGrid = await createorderGrid(cart);
-        const data = [Contact, orderGrid];
-        let order = await postOrder(data);
+        contact = new Contact(firstName, lastName, address, city, email);
+        const products = await createProducts(cart);
+        orderData = {
+            contact,
+            products
+        };
+        let order = await postOrder(orderData);
         console.log(order);
     }
 

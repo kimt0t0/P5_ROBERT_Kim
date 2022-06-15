@@ -132,25 +132,25 @@ function setFormAttributes(inputName, regexModel, min, max, title) {
 /* Création tableau commande */
 
 
-function createorderGrid(cart) {
-  var orderGrid, i, cartKey, splitKey;
-  return regeneratorRuntime.async(function createorderGrid$(_context3) {
+function createProducts(cart) {
+  var products, i, cartKey, splitKey;
+  return regeneratorRuntime.async(function createProducts$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
         case 0:
-          orderGrid = [];
+          products = [];
 
           for (i = 0; i < cart.length; i++) {
             cartKey = localStorage.key(i);
             splitKey = cartKey.split(" ");
             productId = splitKey[0];
 
-            if (orderGrid.includes(productId)) {} else {
-              orderGrid[i] = productId;
+            if (products.includes(productId)) {} else {
+              products[i] = productId;
             }
           }
 
-          return _context3.abrupt("return", orderGrid);
+          return _context3.abrupt("return", products);
 
         case 3:
         case "end":
@@ -163,7 +163,7 @@ function createorderGrid(cart) {
 
 
 function checkForm(e) {
-  var firstName, lastName, address, city, email, regNames, regAddress, regEmail, inputsToTest, regexToTest, error, i, orderGrid, data, order;
+  var firstName, lastName, address, city, email, regNames, regAddress, regEmail, inputsToTest, regexToTest, error, i, products, order;
   return regeneratorRuntime.async(function checkForm$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
@@ -206,15 +206,18 @@ function checkForm(e) {
         case 17:
           e.preventDefault();
           console.log("Envoi du formulaire...");
-          Contact = new Contact(firstName, lastName, address, city, email);
+          contact = new Contact(firstName, lastName, address, city, email);
           _context4.next = 22;
-          return regeneratorRuntime.awrap(createorderGrid(cart));
+          return regeneratorRuntime.awrap(createProducts(cart));
 
         case 22:
-          orderGrid = _context4.sent;
-          data = [Contact, orderGrid];
+          products = _context4.sent;
+          orderData = {
+            contact: contact,
+            products: products
+          };
           _context4.next = 26;
-          return regeneratorRuntime.awrap(postOrder(data));
+          return regeneratorRuntime.awrap(postOrder(orderData));
 
         case 26:
           order = _context4.sent;
