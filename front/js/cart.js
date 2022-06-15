@@ -130,8 +130,8 @@ async function checkForm(e) {
         console.log("Envoi du formulaire...")
         Contact = new Contact(firstName, lastName, address, city, email);
         const orderGrid = await createorderGrid(cart);
-        Contact["orderGrid"] = orderGrid;
-        let order = await postOrder(Contact);
+        const data = [Contact, orderGrid];
+        let order = await postOrder(data);
         console.log(order);
     }
 

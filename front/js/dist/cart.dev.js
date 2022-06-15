@@ -163,7 +163,7 @@ function createorderGrid(cart) {
 
 
 function checkForm(e) {
-  var firstName, lastName, address, city, email, regNames, regAddress, regEmail, inputsToTest, regexToTest, error, i, orderGrid, order;
+  var firstName, lastName, address, city, email, regNames, regAddress, regEmail, inputsToTest, regexToTest, error, i, orderGrid, data, order;
   return regeneratorRuntime.async(function checkForm$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
@@ -212,9 +212,9 @@ function checkForm(e) {
 
         case 22:
           orderGrid = _context4.sent;
-          Contact["orderGrid"] = orderGrid;
+          data = [Contact, orderGrid];
           _context4.next = 26;
-          return regeneratorRuntime.awrap(postOrder(Contact));
+          return regeneratorRuntime.awrap(postOrder(data));
 
         case 26:
           order = _context4.sent;
