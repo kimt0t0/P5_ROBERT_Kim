@@ -38,20 +38,6 @@ class Contact {
     getEmail() {
         return this.email;
     }
-
-    createorderGrid(cart) {
-        var orderGrid = [];
-        for(let i = 0; i < cart.length; i++) {
-            let cartKey = localStorage.key(i);
-            let splitKey = cartKey.split(" ");
-            productId = splitKey[0];
-            productColor = splitKey[1];
-            productQuantity = cart.getItem(cartKey);
-            var cartProduct = [productId, productColor, productQuantity];
-            orderGrid[i] = cartProduct;
-        }
-        return orderGrid;
-    }
 }
 
 
@@ -85,6 +71,22 @@ async function setFormAttributes(inputName, regexModel, min, max, title) {
 }
 
 /* FORMULAIRE */
+
+/* Création tableau commande */
+async function createorderGrid(cart) {
+    let orderGrid = [];
+    for(let i = 0; i < cart.length; i++) {
+        let cartKey = localStorage.key(i);
+        let splitKey = cartKey.split(" ");
+        productId = splitKey[0];
+        if (orderGrid.includes(productId)) {
+        }
+        else {
+            orderGrid[i] = productId;
+        }
+    }
+    return orderGrid;
+}
 
 /* Vérification et création objet contact + tableau produits */
 async function checkForm(e) {
@@ -127,45 +129,30 @@ async function checkForm(e) {
         e.preventDefault();
         console.log("Envoi du formulaire...")
         Contact = new Contact(firstName, lastName, address, city, email);
-        orderGrid = Contact.createorderGrid(cart); 
-        console.log(orderGrid);
-        let totalPriceOrder = await getFinalTotal(orderGrid);
-        console.log(totalPriceOrder);
-        let finalOrder = {
-            "products": orderGrid, 
-            "total": totalPriceOrder
-        };
-        console.log(finalOrder);
-        // postOrder(finalOrder);
+        const orderGrid = await createorderGrid(cart);
+        Contact["orderGrid"] = orderGrid;
+        let order = await postOrder(Contact);
+        console.log(order);
     }
 
-}
-
-/* Calcul du total final pour envoi */
-async function getFinalTotal (orderGrid) {
-    let totalPriceOrder = 0;
-    for (let i = 0; i < orderGrid.length; i++) {
-        productId = orderGrid[i][0];
-        let product = await getProduct(productId);
-        totalPriceOrder += Number(orderGrid[i][2]) * Number(product.price);
-    }
-    return totalPriceOrder;
 }
 
 /* Envoi commande */
 async function postOrder(data) {
     fetch("http://localhost:3000/api/products/order", {
         method: "POST",
+        headers: {"Content-type": "application/json"},
         body: JSON.stringify(data),
-        headers: {"Content-type": "application/json;charset=UTF-8"}
     })
     .then(function(response) {
         return response.json();
     })
-    .then(function(json) {
-        console.log(json);
+    .then(function(json){
+        return console.log("Succès: ", json);
     })
-    .catch(err => console.log(err));
+    .catch(function(err) {
+        return console.log("Erreur: ", err);
+    })
 }
 
 

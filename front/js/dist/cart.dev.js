@@ -51,23 +51,6 @@ function () {
     value: function getEmail() {
       return this.email;
     }
-  }, {
-    key: "createorderGrid",
-    value: function createorderGrid(cart) {
-      var orderGrid = [];
-
-      for (var i = 0; i < cart.length; i++) {
-        var cartKey = localStorage.key(i);
-        var splitKey = cartKey.split(" ");
-        productId = splitKey[0];
-        productColor = splitKey[1];
-        productQuantity = cart.getItem(cartKey);
-        var cartProduct = [productId, productColor, productQuantity];
-        orderGrid[i] = cartProduct;
-      }
-
-      return orderGrid;
-    }
   }]);
 
   return Contact;
@@ -146,14 +129,44 @@ function setFormAttributes(inputName, regexModel, min, max, title) {
 }
 /* FORMULAIRE */
 
+/* Création tableau commande */
+
+
+function createorderGrid(cart) {
+  var orderGrid, i, cartKey, splitKey;
+  return regeneratorRuntime.async(function createorderGrid$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          orderGrid = [];
+
+          for (i = 0; i < cart.length; i++) {
+            cartKey = localStorage.key(i);
+            splitKey = cartKey.split(" ");
+            productId = splitKey[0];
+
+            if (orderGrid.includes(productId)) {} else {
+              orderGrid[i] = productId;
+            }
+          }
+
+          return _context3.abrupt("return", orderGrid);
+
+        case 3:
+        case "end":
+          return _context3.stop();
+      }
+    }
+  });
+}
 /* Vérification et création objet contact + tableau produits */
 
 
 function checkForm(e) {
-  var firstName, lastName, address, city, email, regNames, regAddress, regEmail, inputsToTest, regexToTest, error, i, totalPriceOrder, finalOrder;
-  return regeneratorRuntime.async(function checkForm$(_context3) {
+  var firstName, lastName, address, city, email, regNames, regAddress, regEmail, inputsToTest, regexToTest, error, i, orderGrid, order;
+  return regeneratorRuntime.async(function checkForm$(_context4) {
     while (1) {
-      switch (_context3.prev = _context3.next) {
+      switch (_context4.prev = _context4.next) {
         case 0:
           // Éléments d'input à check:
           firstName = document.getElementById("firstName");
@@ -183,74 +196,31 @@ function checkForm(e) {
           }
 
           if (!(error == true)) {
-            _context3.next = 17;
+            _context4.next = 17;
             break;
           }
 
           e.preventDefault();
-          return _context3.abrupt("return", alert("Votre commande n'a pas pu être finalisée.\nVeuillez vérifier que vous avez complété correctement le formulaire.\n\nEn cas de problème, n'hésitez pas à contacter notre support"));
+          return _context4.abrupt("return", alert("Votre commande n'a pas pu être finalisée.\nVeuillez vérifier que vous avez complété correctement le formulaire.\n\nEn cas de problème, n'hésitez pas à contacter notre support"));
 
         case 17:
           e.preventDefault();
           console.log("Envoi du formulaire...");
           Contact = new Contact(firstName, lastName, address, city, email);
-          orderGrid = Contact.createorderGrid(cart);
-          console.log(orderGrid);
-          _context3.next = 24;
-          return regeneratorRuntime.awrap(getFinalTotal(orderGrid));
+          _context4.next = 22;
+          return regeneratorRuntime.awrap(createorderGrid(cart));
 
-        case 24:
-          totalPriceOrder = _context3.sent;
-          console.log(totalPriceOrder);
-          finalOrder = {
-            "products": orderGrid,
-            "total": totalPriceOrder
-          };
-          console.log(finalOrder); // postOrder(finalOrder);
+        case 22:
+          orderGrid = _context4.sent;
+          Contact["orderGrid"] = orderGrid;
+          _context4.next = 26;
+          return regeneratorRuntime.awrap(postOrder(Contact));
+
+        case 26:
+          order = _context4.sent;
+          console.log(order);
 
         case 28:
-        case "end":
-          return _context3.stop();
-      }
-    }
-  });
-}
-/* Calcul du total final pour envoi */
-
-
-function getFinalTotal(orderGrid) {
-  var totalPriceOrder, i, _product;
-
-  return regeneratorRuntime.async(function getFinalTotal$(_context4) {
-    while (1) {
-      switch (_context4.prev = _context4.next) {
-        case 0:
-          totalPriceOrder = 0;
-          i = 0;
-
-        case 2:
-          if (!(i < orderGrid.length)) {
-            _context4.next = 11;
-            break;
-          }
-
-          productId = orderGrid[i][0];
-          _context4.next = 6;
-          return regeneratorRuntime.awrap(getProduct(productId));
-
-        case 6:
-          _product = _context4.sent;
-          totalPriceOrder += Number(orderGrid[i][2]) * Number(_product.price);
-
-        case 8:
-          i++;
-          _context4.next = 2;
-          break;
-
-        case 11:
-          return _context4.abrupt("return", totalPriceOrder);
-
-        case 12:
         case "end":
           return _context4.stop();
       }
@@ -267,16 +237,16 @@ function postOrder(data) {
         case 0:
           fetch("http://localhost:3000/api/products/order", {
             method: "POST",
-            body: JSON.stringify(data),
             headers: {
-              "Content-type": "application/json;charset=UTF-8"
-            }
+              "Content-type": "application/json"
+            },
+            body: JSON.stringify(data)
           }).then(function (response) {
             return response.json();
           }).then(function (json) {
-            console.log(json);
+            return console.log("Succès: ", json);
           })["catch"](function (err) {
-            return console.log(err);
+            return console.log("Erreur: ", err);
           });
 
         case 1:
