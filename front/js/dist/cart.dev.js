@@ -205,25 +205,24 @@ function checkForm(e) {
 
         case 17:
           e.preventDefault();
-          console.log("Envoi du formulaire...");
           contact = new Contact(firstName, lastName, address, city, email);
-          _context4.next = 22;
+          _context4.next = 21;
           return regeneratorRuntime.awrap(createProducts(cart));
 
-        case 22:
+        case 21:
           products = _context4.sent;
           orderData = {
             contact: contact,
             products: products
           };
-          _context4.next = 26;
+          _context4.next = 25;
           return regeneratorRuntime.awrap(postOrder(orderData));
 
-        case 26:
+        case 25:
           order = _context4.sent;
           console.log(order);
 
-        case 28:
+        case 27:
         case "end":
           return _context4.stop();
       }
@@ -247,7 +246,8 @@ function postOrder(data) {
           }).then(function (response) {
             return response.json();
           }).then(function (json) {
-            return console.log("Succès: ", json);
+            console.log("Num. commande: ", json.orderId);
+            return redirect("../front/html/confirmation.html/" + json.orderId);
           })["catch"](function (err) {
             return console.log("Erreur: ", err);
           });

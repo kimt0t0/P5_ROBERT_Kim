@@ -127,7 +127,6 @@ async function checkForm(e) {
     }
     else {
         e.preventDefault();
-        console.log("Envoi du formulaire...")
         contact = new Contact(firstName, lastName, address, city, email);
         const products = await createProducts(cart);
         orderData = {
@@ -151,7 +150,8 @@ async function postOrder(data) {
         return response.json();
     })
     .then(function(json){
-        return console.log("Succès: ", json);
+        console.log("Num. commande: ", json.orderId);
+        return redirect("../front/html/confirmation.html/" + json.orderId);
     })
     .catch(function(err) {
         return console.log("Erreur: ", err);
