@@ -143,6 +143,7 @@ async function checkForm(e) {
 async function postOrder(data) {
     fetch("http://localhost:3000/api/products/order", {
         method: "POST",
+        redirect: "manual",
         headers: {"Content-type": "application/json"},
         body: JSON.stringify(data),
     })
@@ -150,8 +151,7 @@ async function postOrder(data) {
         return response.json();
     })
     .then(function(json){
-        console.log("Num. commande: ", json.orderId);
-        return redirect("../front/html/confirmation.html/" + json.orderId);
+        return window.location = "confirmation.html?orderId=" + json.orderId;
     })
     .catch(function(err) {
         return console.log("Erreur: ", err);

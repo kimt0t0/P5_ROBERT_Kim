@@ -239,6 +239,7 @@ function postOrder(data) {
         case 0:
           fetch("http://localhost:3000/api/products/order", {
             method: "POST",
+            redirect: "manual",
             headers: {
               "Content-type": "application/json"
             },
@@ -246,8 +247,7 @@ function postOrder(data) {
           }).then(function (response) {
             return response.json();
           }).then(function (json) {
-            console.log("Num. commande: ", json.orderId);
-            return redirect("../front/html/confirmation.html/" + json.orderId);
+            return window.location = "confirmation.html?orderId=" + json.orderId;
           })["catch"](function (err) {
             return console.log("Erreur: ", err);
           });
