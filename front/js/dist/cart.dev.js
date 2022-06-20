@@ -10,7 +10,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 var cart = localStorage;
 var cartCounter = 0;
 var totalPrice = 0;
-var productId, productColor, productQuantity, productImgUrl;
+var productId, productColor, productQuantity;
 /* *** CLASSES *** */
 
 var Contact =
@@ -126,6 +126,19 @@ function setFormAttributes(inputName, regexModel, min, max, title) {
       }
     }
   });
+}
+/* Màj compteur d'articles */
+
+
+function updateCartCounter(cart) {
+  cartCounter = 0;
+
+  for (var i = 0; i < cart.length; i++) {
+    var key = localStorage.key(i);
+    cartCounter += Number(cart[key]);
+  }
+
+  return cartCounter;
 }
 /* FORMULAIRE */
 
@@ -332,25 +345,28 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
           document.getElementById("totalPrice").textContent = totalPrice;
           /* MODIFICATIONS DU PANIER */
 
-          /* /* Modification quantité: */
+          /* Modification quantité: */
 
           settingsQuantityInput.addEventListener("change", function (e) {
-            /* (suppression de la quantité originale du produit dans compteur panier et prix total: ) */
-            cartCounter -= Number(productQuantity);
-            totalPrice -= Number(productQuantity) * Number(product.price);
-            /* (màj nouvelle quantité du produit: ) */
+            //Comptage items depuis localStorage
+            cartCounter = updateCartCounter(cart); //Récupération informations objet visé
 
-            productQuantity = e.target.value;
-            settingsQuantityText.textContent = "Qté : " + productQuantity;
-            /* (màj compteur panier et prix total: ) */
+            productId = e.target.closest(".cart__item").getAttribute("data-id");
+            productColor = e.target.closest(".cart__item").getAttribute("data-color");
+            cartKey = productId + " " + productColor; //Quantité objet avant modification de l'input
 
-            cartCounter += Number(productQuantity);
-            totalPrice += Number(productQuantity) * Number(product.price);
+            var initialQuantity = Number(cart[cartKey]); //Màj prix et quantité
+
+            totalPrice -= initialQuantity * Number(product.price);
+            productQuantity = Number(e.target.value);
+            totalPrice += productQuantity * Number(product.price); //Màj quantité dans le localStorage
+
+            cart[cartKey] = productQuantity; //Màj compteur via comptage localStorage
+
+            cartCounter = updateCartCounter(cart); //Màj affichage
+
             document.getElementById("totalQuantity").textContent = cartCounter;
             document.getElementById("totalPrice").textContent = totalPrice;
-            /* (màj local storage: ) */
-
-            cart[cartKey] = productQuantity;
           });
           /* Suppression d'un produit du panier: */
 

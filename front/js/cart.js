@@ -4,7 +4,8 @@ const cart = localStorage;
 var cartCounter = 0;
 var totalPrice = 0;
 
-var productId, productColor, productQuantity, productImgUrl;
+var productId, productColor, productQuantity;
+
 
 
 
@@ -68,6 +69,16 @@ async function setFormAttributes(inputName, regexModel, min, max, title) {
     inputName.setAttribute("min-length", min);
     inputName.setAttribute("max-length", max);
     inputName.setAttribute("title", title);
+}
+
+/* Màj compteur d'articles */
+function updateCartCounter(cart) {
+    cartCounter = 0;
+    for (let i = 0; i < cart.length; i++) {
+        let key = localStorage.key(i);
+        cartCounter += Number(cart[key]);
+    }
+    return cartCounter
 }
 
 /* FORMULAIRE */
@@ -243,22 +254,28 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
 
         /* MODIFICATIONS DU PANIER */
 
-    /* /* Modification quantité: */
+    /* Modification quantité: */
     settingsQuantityInput.addEventListener("change", function(e) {
-        /* (suppression de la quantité originale du produit dans compteur panier et prix total: ) */
-        cartCounter -= Number(productQuantity);
-        totalPrice -= Number(productQuantity) * Number(product.price);
-        /* (màj nouvelle quantité du produit: ) */
-        productQuantity = e.target.value;
-        settingsQuantityText.textContent = "Qté : " + productQuantity;
-        /* (màj compteur panier et prix total: ) */
-        cartCounter += Number(productQuantity);
-        totalPrice += Number(productQuantity) * Number(product.price);
-
+        //Comptage items depuis localStorage
+        cartCounter = updateCartCounter(cart);
+        //Récupération informations objet visé
+        productId = e.target.closest(".cart__item").getAttribute("data-id");
+        productColor = e.target.closest(".cart__item").getAttribute("data-color");
+        cartKey = productId + " " + productColor;
+        //Quantité objet avant modification de l'input
+        let initialQuantity =  Number(cart[cartKey]);
+        //Màj prix et quantité
+        totalPrice -= initialQuantity * Number(product.price);
+        productQuantity = Number(e.target.value);
+        totalPrice += productQuantity * Number(product.price);
+        //Màj quantité dans le localStorage
+        cart[cartKey] = productQuantity;
+        //Màj compteur via comptage localStorage
+        cartCounter = updateCartCounter(cart);
+        //Màj affichage
         document.getElementById("totalQuantity").textContent = cartCounter;
         document.getElementById("totalPrice").textContent = totalPrice;
-        /* (màj local storage: ) */
-        cart[cartKey] = productQuantity;
+
     });
     
     /* Suppression d'un produit du panier: */
