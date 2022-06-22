@@ -63,14 +63,6 @@ async function getProduct(id) {
       });
 }
 
-/* Attributs du formulaire */
-async function setFormAttributes(inputName, regexModel, min, max, title) {
-    inputName.setAttribute("pattern", regexModel);
-    inputName.setAttribute("min-length", min);
-    inputName.setAttribute("max-length", max);
-    inputName.setAttribute("title", title);
-}
-
 /* Màj compteur d'articles */
 function updateCartCounter(cart) {
     cartCounter = 0;
@@ -83,7 +75,7 @@ function updateCartCounter(cart) {
 
 /* FORMULAIRE */
 
-/* Création tableau commande */
+/* Création tableau produits pour commande */
 async function createProducts(cart) {
     let products = [];
     for(let i = 0; i < cart.length; i++) {
@@ -91,6 +83,7 @@ async function createProducts(cart) {
         let splitKey = cartKey.split(" ");
         productId = splitKey[0];
         if (products.includes(productId)) {
+            continue;
         }
         else {
             products[i] = productId;

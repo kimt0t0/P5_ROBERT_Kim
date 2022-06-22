@@ -107,26 +107,6 @@ function getProduct(id) {
     }
   });
 }
-/* Attributs du formulaire */
-
-
-function setFormAttributes(inputName, regexModel, min, max, title) {
-  return regeneratorRuntime.async(function setFormAttributes$(_context2) {
-    while (1) {
-      switch (_context2.prev = _context2.next) {
-        case 0:
-          inputName.setAttribute("pattern", regexModel);
-          inputName.setAttribute("min-length", min);
-          inputName.setAttribute("max-length", max);
-          inputName.setAttribute("title", title);
-
-        case 4:
-        case "end":
-          return _context2.stop();
-      }
-    }
-  });
-}
 /* Màj compteur d'articles */
 
 
@@ -142,32 +122,49 @@ function updateCartCounter(cart) {
 }
 /* FORMULAIRE */
 
-/* Création tableau commande */
+/* Création tableau produits pour commande */
 
 
 function createProducts(cart) {
   var products, i, cartKey, splitKey;
-  return regeneratorRuntime.async(function createProducts$(_context3) {
+  return regeneratorRuntime.async(function createProducts$(_context2) {
     while (1) {
-      switch (_context3.prev = _context3.next) {
+      switch (_context2.prev = _context2.next) {
         case 0:
           products = [];
+          i = 0;
 
-          for (i = 0; i < cart.length; i++) {
-            cartKey = localStorage.key(i);
-            splitKey = cartKey.split(" ");
-            productId = splitKey[0];
-
-            if (products.includes(productId)) {} else {
-              products[i] = productId;
-            }
+        case 2:
+          if (!(i < cart.length)) {
+            _context2.next = 14;
+            break;
           }
 
-          return _context3.abrupt("return", products);
+          cartKey = localStorage.key(i);
+          splitKey = cartKey.split(" ");
+          productId = splitKey[0];
 
-        case 3:
+          if (!products.includes(productId)) {
+            _context2.next = 10;
+            break;
+          }
+
+          return _context2.abrupt("continue", 11);
+
+        case 10:
+          products[i] = productId;
+
+        case 11:
+          i++;
+          _context2.next = 2;
+          break;
+
+        case 14:
+          return _context2.abrupt("return", products);
+
+        case 15:
         case "end":
-          return _context3.stop();
+          return _context2.stop();
       }
     }
   });
@@ -177,9 +174,9 @@ function createProducts(cart) {
 
 function checkForm(e) {
   var firstName, lastName, address, city, email, regNames, regAddress, regEmail, inputsToTest, regexToTest, error, i, products, order;
-  return regeneratorRuntime.async(function checkForm$(_context4) {
+  return regeneratorRuntime.async(function checkForm$(_context3) {
     while (1) {
-      switch (_context4.prev = _context4.next) {
+      switch (_context3.prev = _context3.next) {
         case 0:
           // Éléments d'input à check:
           firstName = document.getElementById("firstName");
@@ -209,35 +206,35 @@ function checkForm(e) {
           }
 
           if (!(error == true)) {
-            _context4.next = 17;
+            _context3.next = 17;
             break;
           }
 
           e.preventDefault();
-          return _context4.abrupt("return", alert("Votre commande n'a pas pu être finalisée.\nVeuillez vérifier que vous avez complété correctement le formulaire.\n\nEn cas de problème, n'hésitez pas à contacter notre support"));
+          return _context3.abrupt("return", alert("Votre commande n'a pas pu être finalisée.\nVeuillez vérifier que vous avez complété correctement le formulaire.\n\nEn cas de problème, n'hésitez pas à contacter notre support"));
 
         case 17:
           e.preventDefault();
           contact = new Contact(firstName, lastName, address, city, email);
-          _context4.next = 21;
+          _context3.next = 21;
           return regeneratorRuntime.awrap(createProducts(cart));
 
         case 21:
-          products = _context4.sent;
+          products = _context3.sent;
           orderData = {
             contact: contact,
             products: products
           };
-          _context4.next = 25;
+          _context3.next = 25;
           return regeneratorRuntime.awrap(postOrder(orderData));
 
         case 25:
-          order = _context4.sent;
+          order = _context3.sent;
           console.log(order);
 
         case 27:
         case "end":
-          return _context4.stop();
+          return _context3.stop();
       }
     }
   });
@@ -246,9 +243,9 @@ function checkForm(e) {
 
 
 function postOrder(data) {
-  return regeneratorRuntime.async(function postOrder$(_context5) {
+  return regeneratorRuntime.async(function postOrder$(_context4) {
     while (1) {
-      switch (_context5.prev = _context5.next) {
+      switch (_context4.prev = _context4.next) {
         case 0:
           fetch("http://localhost:3000/api/products/order", {
             method: "POST",
@@ -267,7 +264,7 @@ function postOrder(data) {
 
         case 1:
         case "end":
-          return _context5.stop();
+          return _context4.stop();
       }
     }
   });
@@ -277,9 +274,9 @@ function postOrder(data) {
 
 function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) {
   var cartItem, cartItemImg, productImg, cartItemContent, cartItemContentDescr, cartItemContentTitle, cartItemContentColor, cartItemContentPrice, cartItemSettings, settingsQuantity, settingsQuantityText, settingsQuantityInput, deleteContainer, deleteText;
-  return regeneratorRuntime.async(function hydrateDom$(_context6) {
+  return regeneratorRuntime.async(function hydrateDom$(_context5) {
     while (1) {
-      switch (_context6.prev = _context6.next) {
+      switch (_context5.prev = _context5.next) {
         case 0:
           /* ÉLÉMENTS A GÉNÉRER ET PLACER POUR AFFICHAGE */
 
@@ -382,7 +379,7 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
 
         case 55:
         case "end":
-          return _context6.stop();
+          return _context5.stop();
       }
     }
   });
@@ -392,15 +389,15 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
 
 (function _callee() {
   var i, cartKey, splitKey, product, pageContent, userForm;
-  return regeneratorRuntime.async(function _callee$(_context7) {
+  return regeneratorRuntime.async(function _callee$(_context6) {
     while (1) {
-      switch (_context7.prev = _context7.next) {
+      switch (_context6.prev = _context6.next) {
         case 0:
           i = 0;
 
         case 1:
           if (!(i < cart.length)) {
-            _context7.next = 18;
+            _context6.next = 18;
             break;
           }
 
@@ -417,23 +414,23 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
           cartCounter += Number(productQuantity);
           /* Infos serveur: */
 
-          _context7.next = 10;
+          _context6.next = 10;
           return regeneratorRuntime.awrap(getProduct(productId));
 
         case 10:
-          product = _context7.sent;
+          product = _context6.sent;
           totalPrice += Number(productQuantity) * Number(product.price);
           /* Génération contenu page au loading: */
 
-          _context7.next = 14;
+          _context6.next = 14;
           return regeneratorRuntime.awrap(hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey));
 
         case 14:
-          pageContent = _context7.sent;
+          pageContent = _context6.sent;
 
         case 15:
           i++;
-          _context7.next = 1;
+          _context6.next = 1;
           break;
 
         case 18:
@@ -447,7 +444,7 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
 
         case 20:
         case "end":
-          return _context7.stop();
+          return _context6.stop();
       }
     }
   });
