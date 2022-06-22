@@ -258,7 +258,7 @@ document.getElementById("addToCart").addEventListener("click", function _callee2
           cartKey = _context9.sent;
 
           /* ajout au panier */
-          if (product.colors.includes(productColor) && productQuantity > 0) {
+          if (product.colors.includes(productColor) && Number(productQuantity) > 0) {
             addToCart(cartKey, productQuantity);
           } else {
             alert("Toutes nos excuses, le kanap n'a pas pu être ajouté au panier! \nVous avez probablement oublié de préciser une couleur ou une quantité :-)\n\nN'hésitez pas à contacter notre équipe en cas de problème.");

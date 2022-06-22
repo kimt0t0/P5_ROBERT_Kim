@@ -105,7 +105,7 @@ document.getElementById("addToCart").addEventListener("click", async function(e)
     cartKey = await generateCartKey(productId, productColor);
     
     /* ajout au panier */
-    if (product.colors.includes(productColor) && productQuantity > 0) {
+    if (product.colors.includes(productColor) && Number(productQuantity) > 0) {
         addToCart(cartKey, productQuantity);
     } 
     else {
