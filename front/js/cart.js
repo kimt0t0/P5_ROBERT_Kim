@@ -1,5 +1,5 @@
 /* *** VARIABLES *** */
-const cart = localStorage;
+var cart = localStorage;
 
 var cartCounter = 0;
 var totalPrice = 0;
@@ -105,7 +105,6 @@ async function checkForm(e) {
     // Regexs pour check:
     const regNames = /^[a-zA-Z\s'-]+$/;
     const regAddress = /^[a-zA-Z0-9\s,'-]*$/; //problème: valide les entrées contenant uniquement des chiffres...
-    const regEmail = /^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+([A-Za-z0-9]{2,4})$/;
 
     let inputsToTest = [firstName, lastName, address, city, email];
     let regexToTest = [regNames, regNames, regAddress, regNames, regEmail];
@@ -140,8 +139,10 @@ async function checkForm(e) {
         let order = await postOrder(orderData);
         console.log(order);
     }
-
 }
+
+
+
 
 /* Envoi commande */
 async function postOrder(data) {
@@ -281,7 +282,22 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
         document.getElementById("totalPrice").textContent = totalPrice;
         e.target.closest("article").remove();
     });
+
+        /* VÉRIFICATION INPUT MAIL FORMULAIRE */
+    document.getElementById("email").addEventListener("change", function(e) {
+        console.log("input mail modifié");
+        const regEmail = /^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+([A-Za-z0-9]{2,4})$/;
+        let testMail = regEmail.test(e.target.value);
+        if (testMail == false) {
+            document.getElementById("emailErrorMsg").textContent = "Ce champ est vide ou n'a pas été complété correctement.";
+        }
+        else {
+            document.getElementById("emailErrorMsg").textContent = "";
+        }
+    });
 }
+
+
 
 /* *** ACTIONS *** */
 (async function() {
@@ -313,6 +329,7 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
     });
 
 })()
+
 
         
 

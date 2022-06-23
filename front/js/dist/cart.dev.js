@@ -173,7 +173,7 @@ function createProducts(cart) {
 
 
 function checkForm(e) {
-  var firstName, lastName, address, city, email, regNames, regAddress, regEmail, inputsToTest, regexToTest, error, i, products, order;
+  var firstName, lastName, address, city, email, regNames, regAddress, inputsToTest, regexToTest, error, i, products, order;
   return regeneratorRuntime.async(function checkForm$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -188,7 +188,6 @@ function checkForm(e) {
           regNames = /^[a-zA-Z\s'-]+$/;
           regAddress = /^[a-zA-Z0-9\s,'-]*$/; //problème: valide les entrées contenant uniquement des chiffres...
 
-          regEmail = /^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+([A-Za-z0-9]{2,4})$/;
           inputsToTest = [firstName, lastName, address, city, email];
           regexToTest = [regNames, regNames, regAddress, regNames, regEmail]; //Indicateur mauvais remplissage:        
 
@@ -206,33 +205,33 @@ function checkForm(e) {
           }
 
           if (!(error == true)) {
-            _context3.next = 17;
+            _context3.next = 16;
             break;
           }
 
           e.preventDefault();
           return _context3.abrupt("return", alert("Votre commande n'a pas pu être finalisée.\nVeuillez vérifier que vous avez complété correctement le formulaire.\n\nEn cas de problème, n'hésitez pas à contacter notre support"));
 
-        case 17:
+        case 16:
           e.preventDefault();
           contact = new Contact(firstName, lastName, address, city, email);
-          _context3.next = 21;
+          _context3.next = 20;
           return regeneratorRuntime.awrap(createProducts(cart));
 
-        case 21:
+        case 20:
           products = _context3.sent;
           orderData = {
             contact: contact,
             products: products
           };
-          _context3.next = 25;
+          _context3.next = 24;
           return regeneratorRuntime.awrap(postOrder(orderData));
 
-        case 25:
+        case 24:
           order = _context3.sent;
           console.log(order);
 
-        case 27:
+        case 26:
         case "end":
           return _context3.stop();
       }
@@ -376,8 +375,21 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
             document.getElementById("totalPrice").textContent = totalPrice;
             e.target.closest("article").remove();
           });
+          /* VÉRIFICATION INPUT MAIL FORMULAIRE */
 
-        case 55:
+          document.getElementById("email").addEventListener("change", function (e) {
+            console.log("input mail modifié");
+            var regEmail = /^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+([A-Za-z0-9]{2,4})$/;
+            var testMail = regEmail.test(e.target.value);
+
+            if (testMail == false) {
+              document.getElementById("emailErrorMsg").textContent = "Ce champ est vide ou n'a pas été complété correctement.";
+            } else {
+              document.getElementById("emailErrorMsg").textContent = "";
+            }
+          });
+
+        case 56:
         case "end":
           return _context5.stop();
       }
