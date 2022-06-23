@@ -173,7 +173,7 @@ function createProducts(cart) {
 
 
 function checkForm(e) {
-  var firstName, lastName, address, city, email, regNames, regAddress, inputsToTest, regexToTest, error, i, products, order;
+  var firstName, lastName, address, city, email, regNames, regAddress, regEmail, inputsToTest, regexToTest, error, i, products, order;
   return regeneratorRuntime.async(function checkForm$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -188,6 +188,7 @@ function checkForm(e) {
           regNames = /^[a-zA-Z\s'-]+$/;
           regAddress = /^[a-zA-Z0-9\s,'-]*$/; //problème: valide les entrées contenant uniquement des chiffres...
 
+          regEmail = /^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+([A-Za-z0-9]{2,4})$/;
           inputsToTest = [firstName, lastName, address, city, email];
           regexToTest = [regNames, regNames, regAddress, regNames, regEmail]; //Indicateur mauvais remplissage:        
 
@@ -205,33 +206,33 @@ function checkForm(e) {
           }
 
           if (!(error == true)) {
-            _context3.next = 16;
+            _context3.next = 17;
             break;
           }
 
           e.preventDefault();
           return _context3.abrupt("return", alert("Votre commande n'a pas pu être finalisée.\nVeuillez vérifier que vous avez complété correctement le formulaire.\n\nEn cas de problème, n'hésitez pas à contacter notre support"));
 
-        case 16:
+        case 17:
           e.preventDefault();
           contact = new Contact(firstName, lastName, address, city, email);
-          _context3.next = 20;
+          _context3.next = 21;
           return regeneratorRuntime.awrap(createProducts(cart));
 
-        case 20:
+        case 21:
           products = _context3.sent;
           orderData = {
             contact: contact,
             products: products
           };
-          _context3.next = 24;
+          _context3.next = 25;
           return regeneratorRuntime.awrap(postOrder(orderData));
 
-        case 24:
+        case 25:
           order = _context3.sent;
           console.log(order);
 
-        case 26:
+        case 27:
         case "end":
           return _context3.stop();
       }
@@ -256,6 +257,7 @@ function postOrder(data) {
           }).then(function (response) {
             return response.json();
           }).then(function (json) {
+            cart.clear();
             return window.location = "confirmation.html?orderId=" + json.orderId;
           })["catch"](function (err) {
             return console.log("Erreur: ", err);
@@ -371,6 +373,7 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
             totalPrice -= Number(productQuantity) * Number(product.price);
             var cartKey = productId + " " + productColor;
             cart.removeItem(cartKey);
+            window.location.reload();
             document.getElementById("totalQuantity").textContent = cartCounter;
             document.getElementById("totalPrice").textContent = totalPrice;
             e.target.closest("article").remove();

@@ -105,6 +105,7 @@ async function checkForm(e) {
     // Regexs pour check:
     const regNames = /^[a-zA-Z\s'-]+$/;
     const regAddress = /^[a-zA-Z0-9\s,'-]*$/; //problème: valide les entrées contenant uniquement des chiffres...
+    const regEmail = /^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+([A-Za-z0-9]{2,4})$/;
 
     let inputsToTest = [firstName, lastName, address, city, email];
     let regexToTest = [regNames, regNames, regAddress, regNames, regEmail];
@@ -156,6 +157,7 @@ async function postOrder(data) {
         return response.json();
     })
     .then(function(json){
+        cart.clear();
         return window.location = "confirmation.html?orderId=" + json.orderId;
     })
     .catch(function(err) {
@@ -278,6 +280,7 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
         totalPrice -= Number(productQuantity) * Number(product.price);
         let cartKey = productId + " " + productColor;
         cart.removeItem(cartKey);
+        window.location.reload();
         document.getElementById("totalQuantity").textContent = cartCounter;
         document.getElementById("totalPrice").textContent = totalPrice;
         e.target.closest("article").remove();
