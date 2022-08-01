@@ -256,7 +256,13 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
         let initialQuantity =  Number(cart[cartKey]);
         //Màj prix et quantité
         totalPrice -= initialQuantity * Number(product.price);
-        productQuantity = Number(e.target.value);
+        //Vérification valeur input quantité produit:
+        if (Number.isInteger(parseInt(e.target.value)) && e.target.value > 0) {
+            productQuantity = e.target.value;
+        }
+        else {
+            alert("Veuillez entrer une quantité valide (entier positif) pour chaque article ou le supprimer via le bouton adéquat.");
+        }
         totalPrice += productQuantity * Number(product.price);
         //Màj quantité dans le localStorage
         cart[cartKey] = productQuantity;
