@@ -86,7 +86,7 @@ async function addToCart (cartKey, quantity) {
 /* AFFICHAGE */
 (async function() {
     product = await getProduct();
-    var display = await hydrateProduct(product);
+    const display = await hydrateProduct(product);
 })()
 
 
@@ -107,10 +107,18 @@ document.getElementById("addToCart").addEventListener("click", async function(e)
     /* ajout au panier */
     if (product.colors.includes(productColor) && Number(productQuantity) > 0) {
         addToCart(cartKey, productQuantity);
+        alert("Votre produit a bien été ajouté au panier :-D")
     } 
     else {
-        alert("Toutes nos excuses, le kanap n'a pas pu être ajouté au panier! \nVous avez probablement oublié de préciser une couleur ou une quantité :-)\n\nN'hésitez pas à contacter notre équipe en cas de problème.")
+        if (productQuantity <= 0) {
+            alert("Le kanap n'a pas pu être ajouté au panier: \nla quantité entrée n'est pas valide.");
+        }
+        else if (!product.colors.includes(productColor)) {
+            alert("Toutes nos excuses, le kanap n'a pas pu être ajouté au panier: \nvous avez oublié de choisir une couleur.");
+        }
+        else {
+            alert("Toutes nos excuses, une erreur s'est produite. Si le problème persiste, n'hésitez pas à contacter notre équipe :-)");
+        }
     }
-          
 });
 
