@@ -259,9 +259,12 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
         //Vérification valeur input quantité produit:
         if (Number.isInteger(parseInt(e.target.value)) && e.target.value > 0) {
             productQuantity = e.target.value;
+            window.location.reload();
         }
         else {
             alert("Veuillez entrer une quantité valide (entier positif) pour chaque article ou le supprimer via le bouton adéquat.");
+            let orderButton = document.getElementById("order");
+            orderButton.setAttribute("disabled", "true");
         }
         totalPrice += productQuantity * Number(product.price);
         //Màj quantité dans le localStorage
@@ -320,7 +323,8 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
         
         // Si panier vide:
         if (cart.length == 0) {
-            alert('Impossible de passer commande, votre panier est vide!');
+            alert("Impossible de passer commande, votre panier est vide! \nVous allez être redirigé-e vers l'index");
+            return window.location = "index.html";
             let orderButton = document.getElementById("order");
             orderButton.setAttribute("disabled", "true");
         }

@@ -351,8 +351,11 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
 
             if (Number.isInteger(parseInt(e.target.value)) && e.target.value > 0) {
               productQuantity = e.target.value;
+              window.location.reload();
             } else {
               alert("Veuillez entrer une quantité valide (entier positif) pour chaque article ou le supprimer via le bouton adéquat.");
+              var orderButton = document.getElementById("order");
+              orderButton.setAttribute("disabled", "true");
             }
 
             totalPrice += productQuantity * Number(product.price); //Màj quantité dans le localStorage
@@ -401,7 +404,7 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
           // Désactivation du bouton de commande: 
           alert("Attention: votre panier est vide, vous ne pouvez pas commander");
           document.getElementById("order").setAttribute("diabled", "true");
-          _context8.next = 26;
+          _context8.next = 30;
           break;
 
         case 5:
@@ -441,16 +444,18 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
           break;
 
         case 23:
-          // Si panier vide:
-          if (cart.length == 0) {
-            alert('Impossible de passer commande, votre panier est vide!');
-            orderButton = document.getElementById("order");
-            orderButton.setAttribute("disabled", "true");
-          } // Si panier non vide:
+          if (!(cart.length == 0)) {
+            _context8.next = 28;
+            break;
+          }
+
+          alert("Impossible de passer commande, votre panier est vide! \nVous allez être redirigé-e vers l'index");
+          return _context8.abrupt("return", window.location = "index.html");
+
+        case 28:
+          // Si panier non vide:
 
           /* Vérification formulaire: */
-
-
           userForm = document.getElementById("cart__order__form");
           userForm.addEventListener("submit", function _callee(e) {
             var check, data, order;
@@ -489,10 +494,10 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
             });
           });
 
-        case 26:
+        case 30:
           return _context8.abrupt("return", console.log("fin input"));
 
-        case 27:
+        case 31:
         case "end":
           return _context8.stop();
       }
