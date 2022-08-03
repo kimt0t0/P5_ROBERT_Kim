@@ -22,29 +22,15 @@ var Contact = function Contact(firstName, lastName, address, city, email) {
 
 /* *** GÉNÉRAL *** */
 
-/* RÉCUPÉRATION DES PRODUITS DANS LE LOCAL STORAGE */
-
-
-function getProducts(cart) {
-  return regeneratorRuntime.async(function getProducts$(_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-        case "end":
-          return _context.stop();
-      }
-    }
-  });
-}
 /* RÉCUPÉRATION DE CHAQUE PRODUIT SUR SERVEUR */
 
 
 function getProduct(id) {
-  return regeneratorRuntime.async(function getProduct$(_context2) {
+  return regeneratorRuntime.async(function getProduct$(_context) {
     while (1) {
-      switch (_context2.prev = _context2.next) {
+      switch (_context.prev = _context.next) {
         case 0:
-          return _context2.abrupt("return", fetch("http://localhost:3000/api/products").then(function (httpBodyResponse) {
+          return _context.abrupt("return", fetch("http://localhost:3000/api/products").then(function (httpBodyResponse) {
             return httpBodyResponse.json();
           }).then(function (products) {
             var _iteratorNormalCompletion = true;
@@ -79,7 +65,7 @@ function getProduct(id) {
 
         case 1:
         case "end":
-          return _context2.stop();
+          return _context.stop();
       }
     }
   });
@@ -113,15 +99,13 @@ function checkForm() {
   var regAddress = /\d+\,{0,1}\s+\w+\s+\w+/;
   var regEmail = /^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+([A-Za-z0-9]{2,4})$/;
   var inputsToTest = [firstName, lastName, address, city, email];
-  var regexsToTest = [regNames, regNames, regAddress, regNames, regEmail]; // Variable à renvoyer en fin de fonction (true si aucune erreur, false si au moins une erreur):
-  // Boucle de test:
+  var regexsToTest = [regNames, regNames, regAddress, regNames, regEmail]; // Boucle de test:
 
   for (i = 0; i < inputsToTest.length; i++) {
     var inp = inputsToTest[i];
     var reg = regexsToTest[i]; // Valeur du test pour l'input en cours:
 
-    var test = reg.test(inp.value);
-    var tests = []; // Si false sur ce test, message d'erreur sous le champ correspondant:
+    var test = reg.test(inp.value); // Si false sur ce test, message d'erreur sous le champ correspondant:
 
     if (test == false) {
       var globalTest = false;
@@ -158,16 +142,16 @@ function checkForm() {
 function createTable(cart) {
   var productsTable, _i2, cartKey, splitKey;
 
-  return regeneratorRuntime.async(function createTable$(_context3) {
+  return regeneratorRuntime.async(function createTable$(_context2) {
     while (1) {
-      switch (_context3.prev = _context3.next) {
+      switch (_context2.prev = _context2.next) {
         case 0:
           productsTable = [];
           _i2 = 0;
 
         case 2:
           if (!(_i2 < cart.length)) {
-            _context3.next = 14;
+            _context2.next = 14;
             break;
           }
 
@@ -176,26 +160,26 @@ function createTable(cart) {
           productId = splitKey[0];
 
           if (!productsTable.includes(productId)) {
-            _context3.next = 10;
+            _context2.next = 10;
             break;
           }
 
-          return _context3.abrupt("continue", 11);
+          return _context2.abrupt("continue", 11);
 
         case 10:
           productsTable[_i2] = productId;
 
         case 11:
           _i2++;
-          _context3.next = 2;
+          _context2.next = 2;
           break;
 
         case 14:
-          return _context3.abrupt("return", productsTable);
+          return _context2.abrupt("return", productsTable);
 
         case 15:
         case "end":
-          return _context3.stop();
+          return _context2.stop();
       }
     }
   });
@@ -205,27 +189,25 @@ function createTable(cart) {
 
 function createData() {
   var products, orderData;
-  return regeneratorRuntime.async(function createData$(_context4) {
+  return regeneratorRuntime.async(function createData$(_context3) {
     while (1) {
-      switch (_context4.prev = _context4.next) {
+      switch (_context3.prev = _context3.next) {
         case 0:
           contact = new Contact(firstName, lastName, address, city, email);
-          _context4.next = 3;
+          _context3.next = 3;
           return regeneratorRuntime.awrap(createTable(cart));
 
         case 3:
-          products = _context4.sent;
-          console.log("produits: ", products);
+          products = _context3.sent;
           orderData = {
             contact: contact,
             products: products
           };
-          console.log("Données à envoyer: ", orderData);
-          return _context4.abrupt("return", orderData);
+          return _context3.abrupt("return", orderData);
 
-        case 8:
+        case 6:
         case "end":
-          return _context4.stop();
+          return _context3.stop();
       }
     }
   });
@@ -234,9 +216,9 @@ function createData() {
 
 
 function postOrder(data) {
-  return regeneratorRuntime.async(function postOrder$(_context5) {
+  return regeneratorRuntime.async(function postOrder$(_context4) {
     while (1) {
-      switch (_context5.prev = _context5.next) {
+      switch (_context4.prev = _context4.next) {
         case 0:
           fetch("http://localhost:3000/api/products/order", {
             method: "POST",
@@ -249,15 +231,14 @@ function postOrder(data) {
             return response.json();
           }).then(function (json) {
             cart.clear();
-            console.log("Id de commande: ", json.orderId);
             return window.location = "confirmation.html?orderId=" + json.orderId;
           })["catch"](function (err) {
-            return console.log("Erreur: ", err);
+            return alert("Oooops! Il y a eu une erreur: ", err);
           });
 
         case 1:
         case "end":
-          return _context5.stop();
+          return _context4.stop();
       }
     }
   });
@@ -267,9 +248,9 @@ function postOrder(data) {
 
 function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) {
   var cartItem, cartItemImg, productImg, cartItemContent, cartItemContentDescr, cartItemContentTitle, cartItemContentColor, cartItemContentPrice, cartItemSettings, settingsQuantity, settingsQuantityText, settingsQuantityInput, deleteContainer, deleteText;
-  return regeneratorRuntime.async(function hydrateDom$(_context6) {
+  return regeneratorRuntime.async(function hydrateDom$(_context5) {
     while (1) {
-      switch (_context6.prev = _context6.next) {
+      switch (_context5.prev = _context5.next) {
         case 0:
           /* AFFICHAGE PRODUITS */
 
@@ -374,14 +355,11 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
             totalPrice -= Number(productQuantity) * Number(product.price);
             cart.removeItem(cartKey);
             window.location.reload();
-            document.getElementById("totalQuantity").textContent = cartCounter;
-            document.getElementById("totalPrice").textContent = totalPrice;
-            localStorage.removeItem(cartKey);
           });
 
         case 55:
         case "end":
-          return _context6.stop();
+          return _context5.stop();
       }
     }
   });
@@ -390,29 +368,26 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
 
 
 (function _callee2() {
-  var _i3, cartKey, splitKey, product, pageContent, orderButton, userForm;
+  var _i3, cartKey, splitKey, product, pageContent, userForm;
 
-  return regeneratorRuntime.async(function _callee2$(_context8) {
+  return regeneratorRuntime.async(function _callee2$(_context7) {
     while (1) {
-      switch (_context8.prev = _context8.next) {
+      switch (_context7.prev = _context7.next) {
         case 0:
           if (!(cart.length == 0)) {
-            _context8.next = 5;
+            _context7.next = 3;
             break;
           }
 
-          // Désactivation du bouton de commande: 
-          alert("Attention: votre panier est vide, vous ne pouvez pas commander");
-          document.getElementById("order").setAttribute("diabled", "true");
-          _context8.next = 30;
-          break;
+          alert("Impossible de passer commande, votre panier est vide! \nVous allez être redirigé-e vers l'index");
+          return _context7.abrupt("return", window.location = "../html/index.html");
 
-        case 5:
+        case 3:
           _i3 = 0;
 
-        case 6:
+        case 4:
           if (!(_i3 < cart.length)) {
-            _context8.next = 23;
+            _context7.next = 21;
             break;
           }
 
@@ -425,81 +400,67 @@ function hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey) 
 
           cartCounter += Number(productQuantity); // (Infos serveur:)
 
-          _context8.next = 15;
+          _context7.next = 13;
           return regeneratorRuntime.awrap(getProduct(productId));
 
-        case 15:
-          product = _context8.sent;
+        case 13:
+          product = _context7.sent;
           totalPrice += Number(productQuantity) * Number(product.price); // (Contenu dynamique page:)
 
-          _context8.next = 19;
+          _context7.next = 17;
           return regeneratorRuntime.awrap(hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey));
 
-        case 19:
-          pageContent = _context8.sent;
+        case 17:
+          pageContent = _context7.sent;
 
-        case 20:
+        case 18:
           _i3++;
-          _context8.next = 6;
+          _context7.next = 4;
           break;
 
-        case 23:
-          if (!(cart.length == 0)) {
-            _context8.next = 28;
-            break;
-          }
-
-          alert("Impossible de passer commande, votre panier est vide! \nVous allez être redirigé-e vers l'index");
-          return _context8.abrupt("return", window.location = "index.html");
-
-        case 28:
-          // Si panier non vide:
-
+        case 21:
           /* Vérification formulaire: */
           userForm = document.getElementById("cart__order__form");
           userForm.addEventListener("submit", function _callee(e) {
             var check, data, order;
-            return regeneratorRuntime.async(function _callee$(_context7) {
+            return regeneratorRuntime.async(function _callee$(_context6) {
               while (1) {
-                switch (_context7.prev = _context7.next) {
+                switch (_context6.prev = _context6.next) {
                   case 0:
-                    e.preventDefault(); // Si panier plein:
-
+                    e.preventDefault();
                     check = checkForm(e);
 
                     if (!(check == false)) {
-                      _context7.next = 4;
+                      _context6.next = 4;
                       break;
                     }
 
-                    return _context7.abrupt("return", false);
+                    return _context6.abrupt("return", false);
 
                   case 4:
-                    _context7.next = 6;
+                    _context6.next = 6;
                     return regeneratorRuntime.awrap(createData());
 
                   case 6:
-                    data = _context7.sent;
-                    _context7.next = 9;
+                    data = _context6.sent;
+                    _context6.next = 9;
                     return regeneratorRuntime.awrap(postOrder(data));
 
                   case 9:
-                    order = _context7.sent;
+                    order = _context6.sent;
+                    return _context6.abrupt("return", true);
 
-                  case 10:
+                  case 11:
                   case "end":
-                    return _context7.stop();
+                    return _context6.stop();
                 }
               }
             });
           });
 
-        case 30:
-          return _context8.abrupt("return", console.log("fin input"));
-
-        case 31:
+        case 23:
         case "end":
-          return _context8.stop();
+          return _context7.stop();
       }
     }
   });

@@ -8,7 +8,6 @@ var productId, productColor, productQuantity;
 
 
 /* ***** CLASSES ***** */
-
 class Contact {
     constructor (firstName, lastName, address, city, email) {
         this.firstName = firstName.value;
@@ -24,10 +23,6 @@ class Contact {
 /* ***** FONCTIONS ***** */
 
 /* *** GÉNÉRAL *** */
-
-/* RÉCUPÉRATION DES PRODUITS DANS LE LOCAL STORAGE */
-async function getProducts(cart) {}
-
 /* RÉCUPÉRATION DE CHAQUE PRODUIT SUR SERVEUR */
 async function getProduct(id) {
     return fetch("http://localhost:3000/api/products")
@@ -73,15 +68,13 @@ function checkForm() {
     let inputsToTest = [firstName, lastName, address, city, email];
     let regexsToTest = [regNames, regNames, regAddress, regNames, regEmail];
 
-    // Variable à renvoyer en fin de fonction (true si aucune erreur, false si au moins une erreur):
-
     // Boucle de test:
     for (i=0; i < inputsToTest.length; i++) {
         let inp = inputsToTest[i];
         let reg = regexsToTest[i];
+
         // Valeur du test pour l'input en cours:
         let test = reg.test(inp.value);
-        var tests = [];
         
         // Si false sur ce test, message d'erreur sous le champ correspondant:
         if (test == false) {
@@ -128,13 +121,14 @@ async function createTable(cart) {
 /* GÉNÉRATION DONNÉES ENVOI */
 async function createData() {
     contact = new Contact(firstName, lastName, address, city, email);
+
     const products = await createTable(cart);
-    console.log("produits: ", products);
+    
     var orderData = {
         contact,
         products
     };
-    console.log("Données à envoyer: ", orderData);
+
     return orderData
 }
 
@@ -152,11 +146,11 @@ async function postOrder(data) {
     })
     .then(function(json){
         cart.clear();
-        console.log("Id de commande: ", json.orderId);
+        
         return window.location = "confirmation.html?orderId=" + json.orderId;
     })
     .catch(function(err) {
-        return console.log("Erreur: ", err);
+        return alert("Oooops! Il y a eu une erreur: ", err);
     })
 }
 
@@ -283,9 +277,6 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
         totalPrice -= Number(productQuantity) * Number(product.price);
         cart.removeItem(cartKey);
         window.location.reload();
-        document.getElementById("totalQuantity").textContent = cartCounter;
-        document.getElementById("totalPrice").textContent = totalPrice;
-        localStorage.removeItem(cartKey);
     });
 }
 
@@ -295,55 +286,46 @@ async function hydrateDom(product, cartCounter, totalPrice, productQuantity, car
 (async function() {
     /* SI PANIER VIDE */ 
     if (cart.length == 0) {
-        // Désactivation du bouton de commande: 
-        alert("Attention: votre panier est vide, vous ne pouvez pas commander");
-        document.getElementById("order").setAttribute("diabled", "true");
+        alert("Impossible de passer commande, votre panier est vide! \nVous allez être redirigé-e vers l'index");
+        return window.location = "../html/index.html";
     }
+
     /* SINON */
-    else {
-        // Affichage dynamique produit par produit:
-        for(let i = 0; i < cart.length; i++){
-            // (Récupération infos produits en local storage:)
-            var cartKey = localStorage.key(i);
-            var splitKey = cartKey.split(" ");
-            productId = splitKey[0];
-            productColor = splitKey[1];
-            productQuantity = cart.getItem(cartKey);
-
-            // (Màj compteur d'items:)
-            cartCounter += Number(productQuantity);
-    
-            // (Infos serveur:)
-            var product = await getProduct(productId);
-            totalPrice += Number(productQuantity) * Number(product.price);
-    
-            // (Contenu dynamique page:)
-            const pageContent = await hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey);
-        }
+    // Affichage dynamique produit par produit:
+    for(let i = 0; i < cart.length; i++){
+        // (Récupération infos produits en local storage:)
+        var cartKey = localStorage.key(i);
+        var splitKey = cartKey.split(" ");
+        productId = splitKey[0];
+        productColor = splitKey[1];
+        productQuantity = cart.getItem(cartKey);
         
-        // Si panier vide:
-        if (cart.length == 0) {
-            alert("Impossible de passer commande, votre panier est vide! \nVous allez être redirigé-e vers l'index");
-            return window.location = "index.html";
-            let orderButton = document.getElementById("order");
-            orderButton.setAttribute("disabled", "true");
-        }
-
-        // Si panier non vide:
-        /* Vérification formulaire: */
-        const userForm = document.getElementById("cart__order__form");
-        userForm.addEventListener("submit", async function (e) {
-            e.preventDefault();
-            // Si panier plein:
-            let check = checkForm(e);
-            if (check == false) {
-                return false;
-            }
-            let data = await createData();
-            let order = await postOrder(data);
-        });
+        // (Màj compteur d'items:)
+        cartCounter += Number(productQuantity);
+        
+        // (Infos serveur:)
+        var product = await getProduct(productId);
+        totalPrice += Number(productQuantity) * Number(product.price);
+        
+        // (Contenu dynamique page:)
+        const pageContent = await hydrateDom(product, cartCounter, totalPrice, productQuantity, cartKey);
     }
-    return console.log("fin input");
+    
+    /* Vérification formulaire: */
+    const userForm = document.getElementById("cart__order__form");
+    userForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        
+        let check = checkForm(e);
+
+        if (check == false) {
+            return false;
+        }
+        let data = await createData();
+        let order = await postOrder(data);
+        
+        return true;
+    });
 })()
 
 
